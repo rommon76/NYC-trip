@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>7 Chicks, 2 Blokes · One Big Apple</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+:root {
+  --cream:#F4FAF6;--ink:#1C2E24;--rust:#6B35C4;--gold:#6B35C4;
+  --gold-light:rgba(107,53,196,0.08);--sage:#4A8C62;--slate:#5A7266;
+  --border:#D8EDE0;--card:#FAFDF8;--white:#FFF;
+  --cfm-bg:rgba(74,140,98,0.12);--cfm-fg:#2A6642;
+  --bk-bg:rgba(107,53,196,0.1);--bk-fg:#521EA8;
+  --opt-bg:rgba(107,53,196,0.07);--opt-fg:#6B35C4;
+  --warn-bg:rgba(107,53,196,0.07);--tip-bg:rgba(74,140,98,0.08);
+  --dir-bg:#EAF5EE;--dir-fg:#1E5C38;--dir-border:#B0D8BF;
+  --r:10px;--sh:0 2px 14px rgba(28,46,36,0.07);--touch:48px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--cream);color:var(--ink);font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-weight:300;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.hdr{background:#DCF0E4;color:#1C2E24;position:relative;overflow:hidden;padding:env(safe-area-inset-top,0) 0 0}
+.hdr::after{display:none}
+.hdr-inner{position:relative;z-index:1;padding:2rem 1.25rem 1.75rem;text-align:center}
+.hdr-eye{font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:#6B35C4;margin-bottom:.6rem;font-weight:600}
+.hdr h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.7rem,8vw,2.8rem);font-weight:900;line-height:1.1;margin-bottom:.3rem}
+.hdr h1 em{font-style:italic;color:#6B35C4}
+.hdr-sub{font-size:.72rem;color:rgba(28,46,36,.5);line-height:1.5;margin-top:.4rem}
+.hdr-hotel{display:inline-flex;align-items:center;gap:.4rem;margin-top:1rem;background:rgba(107,53,196,.1);border:1px solid rgba(107,53,196,.25);color:#521EA8;font-size:.72rem;font-weight:500;padding:.45rem 1rem;border-radius:100px}
+.flash{background:#6B35C4;color:#fff;text-align:center;padding:.65rem 1.25rem;font-size:.72rem;font-weight:500;line-height:1.5}
+.main{max-width:680px;margin:0 auto;padding:1.25rem 1rem 5rem}
+.panel{margin-bottom:.75rem;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.ptog{display:flex;align-items:center;justify-content:space-between;background:#2C4A38;color:#EAF5EE;padding:.9rem 1.1rem;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:var(--touch);user-select:none;gap:.75rem}
+.ptog-lbl{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500}
+.pchev{color:#9BE0B4;font-size:1rem;transition:transform .28s ease;flex-shrink:0}
+.panel.open .pchev{transform:rotate(180deg)}
+.pbody{display:none;background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r)}
+.panel.open .pbody{display:block}
+.kgrid{display:grid;grid-template-columns:1fr 1fr}
+.ki{padding:.9rem 1rem;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.ki:nth-child(even){border-right:none}
+.ki:nth-last-child(-n+2){border-bottom:none}
+.klbl{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-bottom:.2rem}
+.kval{font-size:.82rem;font-weight:500;color:var(--ink);line-height:1.4}
+.ctbl{width:100%;border-collapse:collapse}
+.ctbl tr{border-bottom:1px solid var(--border)}
+.ctbl tr:last-child{border-bottom:none}
+.ctbl td{padding:.7rem 1rem;font-size:.8rem;vertical-align:top;line-height:1.4}
+.ctbl td:first-child{color:var(--slate);padding-right:.5rem}
+.ctbl td:last-child{font-weight:500;color:var(--rust);font-size:.75rem;text-align:right}
+.dsec{margin-top:1.25rem}
+.dsec-ttl{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);padding:0 .25rem;margin-bottom:.75rem}
+.dcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:.6rem;overflow:hidden;box-shadow:var(--sh);opacity:0;transform:translateY(8px);animation:fadeUp .35s ease forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.dhdr{display:flex;align-items:center;padding:1rem 1.1rem;cursor:pointer;-webkit-tap-highlight-color:transparent;gap:1rem;min-height:var(--touch);user-select:none}
+.dnum-wrap{flex-shrink:0;width:2.6rem;height:2.6rem;border-radius:8px;background:var(--cream);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s}
+.dcard.open .dnum-wrap{background:#6B35C4;border-color:#6B35C4}
+.dnum{font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:900;color:var(--slate);line-height:1;transition:color .2s}
+.dcard.open .dnum{color:#fff}
+.dhdr-txt{flex:1;min-width:0}
+.dlbl{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-bottom:.1rem}
+.dttl{font-family:'Playfair Display',Georgia,serif;font-size:.98rem;font-weight:700;color:var(--ink);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dwth{font-size:.67rem;color:var(--slate);margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dhdr-r{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;flex-shrink:0}
+.sdots{display:flex;gap:3px}
+.dot{width:7px;height:7px;border-radius:50%}
+.dc{background:#4A8C62}.dt{background:#6B35C4}.do{background:#A07BC4}
+.dchev{font-size:.9rem;color:var(--slate);transition:transform .28s ease,color .2s}
+.dcard.open .dchev{transform:rotate(180deg);color:#6B35C4}
+.dbody{display:none}
+.dcard.open .dbody{display:block}
+.tnote{display:flex;gap:.6rem;align-items:flex-start;background:var(--gold-light);border-top:1px solid var(--border);padding:.75rem 1rem;font-size:.75rem;color:var(--ink);line-height:1.5}
+.tl{padding:.75rem 0;border-top:1px solid var(--border)}
+.tli{display:flex;position:relative}
+.tli::before{content:'';position:absolute;left:4.2rem;top:0;bottom:0;width:1px;background:var(--border)}
+.tli:first-child::before{top:1.1rem}
+.tli:last-child::before{bottom:calc(100% - 1.1rem)}
+.tlt{flex-shrink:0;width:4rem;text-align:right;font-size:.63rem;font-weight:500;color:var(--slate);padding:1rem .6rem 1rem .75rem;line-height:1.3}
+.tld{flex-shrink:0;width:.85rem;display:flex;flex-direction:column;align-items:center;padding-top:1.05rem;position:relative;z-index:1}
+.tldot{width:8px;height:8px;border-radius:50%;background:var(--cream);border:1.5px solid var(--border);flex-shrink:0}
+.tlcw{flex:1;min-width:0;padding:.6rem .85rem .6rem .6rem}
+
+/* DIRECTION LINK — always visible, tappable */
+.dir-link{display:flex;align-items:center;gap:.5rem;background:var(--dir-bg);border:1px solid var(--dir-border);border-radius:7px;padding:.5rem .75rem;margin-bottom:.45rem;text-decoration:none;color:var(--dir-fg);font-size:.76rem;font-weight:500;line-height:1.4;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.dir-link:active{background:#D0EBDA}
+.dir-icon{font-size:1rem;flex-shrink:0}
+.dir-text{flex:1}
+.dir-arrow{font-size:.7rem;opacity:.5;flex-shrink:0}
+
+.ac{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ac.hd{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ac.hd:active{opacity:.85}
+.ac.exp{border-color:#6B35C4}
+.at{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;padding:.7rem .85rem}
+.an{font-size:.83rem;font-weight:500;color:var(--ink);line-height:1.4;flex:1;min-width:0}
+.abadge{flex-shrink:0;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;padding:.2rem .45rem;border-radius:4px;margin-top:.1rem;white-space:nowrap}
+.bc{background:var(--cfm-bg);color:var(--cfm-fg)}
+.bb{background:var(--bk-bg);color:var(--bk-fg)}
+.bo{background:var(--opt-bg);color:var(--opt-fg)}
+.xhint{display:flex;align-items:center;gap:.35rem;padding:0 .85rem .55rem;font-size:.62rem;color:var(--slate);opacity:.7}
+.xhint-c{font-size:.65rem;transition:transform .25s}
+.ac.exp .xhint-c{transform:rotate(180deg)}
+.adet{display:none;border-top:1px dashed var(--border);padding:.75rem .85rem;background:#F5FBF7}
+.adet.show{display:block}
+.dctag{display:inline-flex;align-items:center;gap:.3rem;background:rgba(107,53,196,0.1);color:#521EA8;font-size:.7rem;font-weight:500;padding:.3rem .65rem;border-radius:5px;margin-bottom:.5rem;line-height:1.3}
+.dwarn{background:var(--warn-bg);border-left:3px solid #6B35C4;border-radius:0 6px 6px 0;padding:.55rem .75rem;font-size:.76rem;color:var(--ink);line-height:1.5;margin-bottom:.5rem}
+.dtip{background:var(--tip-bg);border-left:3px solid #4A8C62;border-radius:0 6px 6px 0;padding:.55rem .75rem;font-size:.76rem;color:var(--ink);line-height:1.55}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;padding:.85rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:1rem;align-items:center}
+.li{display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--slate)}
+.ldot{width:8px;height:8px;border-radius:50%}
+.lhint{font-size:.62rem;color:var(--slate);margin-left:auto}
+.ftr{background:#2C4A38;color:rgba(234,245,238,.45);text-align:center;padding:2rem 1.25rem calc(env(safe-area-inset-bottom,0) + 2rem);font-size:.72rem;letter-spacing:.06em;line-height:1.7}
+.ftr strong{display:block;font-family:'Playfair Display',Georgia,serif;font-style:italic;color:#9BE0B4;font-size:1rem;margin-bottom:.3rem}
+@media(max-width:380px){.kgrid{grid-template-columns:1fr}.ki{border-right:none!important}.ki:nth-last-child(-n+2){border-bottom:1px solid var(--border)}.ki:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-eye">May 4 – 17, 2026 · New York City</div>
+    <h1>7 Chicks, 2 Blokes &amp;<br><em>One Big Apple</em></h1>
+    <div class="hdr-sub">Monica · Erica · Lauren · Alyssa · Christine · Angelina<br>Romina · Chris · Nick</div>
+    <div class="hdr-hotel">🏨 Park Central New York · 870 7th Avenue at 56th St</div>
+  </div>
+</div>
+<div class="flash">💵 BRING CASH FOR GROUP DINNERS — notes of all denominations</div>
+
+<div class="main">
+  <div class="legend">
+    <div class="li"><div class="ldot dc"></div>Confirmed</div>
+    <div class="li"><div class="ldot dt"></div>To book</div>
+    <div class="li"><div class="ldot do"></div>Optional</div>
+    <div class="lhint">🗺 Green buttons = tap for directions</div>
+  </div>
+
+  <div class="panel" id="p-details">
+    <div class="ptog" onclick="togglePanel('p-details')"><span class="ptog-lbl">Key Details &amp; Flights</span><span class="pchev">▾</span></div>
+    <div class="pbody">
+      <div class="kgrid">
+        <div class="ki"><div class="klbl">Outbound</div><div class="kval">QF3 · SYD 9:10am Mon 4 May → JFK 4:20pm</div></div>
+        <div class="ki"><div class="klbl">Return</div><div class="kval">QF4 · JFK 7:20pm Sun 17 → SYD 8:20am Tue 19</div></div>
+        <div class="ki"><div class="klbl">Hotel Payment</div><div class="kval">~AUD $1,850 each · due 30th April (Monica Romano)</div></div>
+        <div class="ki"><div class="klbl">Airport Shuttle</div><div class="kval">First Choice Shuttle · confirmed both ways</div></div>
+        <div class="ki"><div class="klbl">GO Airlink Arrival</div><div class="kval">#835618 · goairlinkshuttle.com</div></div>
+        <div class="ki"><div class="klbl">GO Airlink Departure</div><div class="kval">#835619 · goairlinkshuttle.com</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-confs">
+    <div class="ptog" onclick="togglePanel('p-confs')"><span class="ptog-lbl">All Confirmation Numbers</span><span class="pchev">▾</span></div>
+    <div class="pbody">
+      <table class="ctbl">
+        <tr><td>Big Bus — Cavallaro</td><td>HTCTFR29</td></tr>
+        <tr><td>Big Bus — Burgess</td><td>EYZG031X</td></tr>
+        <tr><td>Big Bus — Romano</td><td>GHTHBMCD</td></tr>
+        <tr><td>Empire State Building (Erica · $91.50 USD each)</td><td>XQKPHCBS</td></tr>
+        <tr><td>Woodbury Common Bus (Erica x4 · $45 USD)</td><td>D6KKGH46</td></tr>
+        <tr><td>Carmine's Italian (5 people)</td><td>2114721485</td></tr>
+        <tr><td>Hamilton — Richard Rodgers</td><td>T021526624082</td></tr>
+        <tr><td>Beaches — Majestic Theatre</td><td>T021526852294T</td></tr>
+        <tr><td>Yankee Stadium · Sec 426, Row 5, Seats 17–21</td><td>47-32010/NY5</td></tr>
+        <tr><td>Nobu dinner</td><td>2111674166</td></tr>
+        <tr><td>Liberty Cruise (Erica · 4 tix Apple Wallet)</td><td>CL-1774320471-69e1</td></tr>
+        <tr><td>Hudson Yards Vessel (Erica · 4 tix Apple Wallet)</td><td>NGF6M3VN</td></tr>
+        <tr><td>Summit One Vanderbilt (Erica · 4 tix Apple Wallet)</td><td>20260323-43248990</td></tr>
+        <tr><td>Top of the Rock (Erica · 4 tix Apple Wallet)</td><td>—</td></tr>
+        <tr><td>Guggenheim (Erica · 4 tix Apple Wallet)</td><td>—</td></tr>
+        <tr><td>Central Park Zoo (Erica · 4 tix Apple Wallet)</td><td>—</td></tr>
+        <tr><td>NYC Horse Carriage (Monica · Get Your Guide)</td><td>GYGWZAZXNXWM</td></tr>
+        <tr><td>Clipper City Tall Ship (Erica · 6 tix Apple Wallet)</td><td>334966875</td></tr>
+        <tr><td>Moulin Rouge Broadway</td><td>206766064-8075631</td></tr>
+        <tr><td>FRIENDS™ Experience (Monica &amp; Lauren · Apple Wallet)</td><td>5RZB7FB207082299</td></tr>
+        <tr><td>Ci Siamo x5</td><td>#642AWF3UMG6W</td></tr>
+        <tr><td>Ci Siamo x4</td><td>#642B6TDXGH5T</td></tr>
+        <tr><td>Blue Box Café at Tiffany's</td><td>Confirmed via email</td></tr>
+        <tr><td>Comedy Cellar (Day 5)</td><td>9604426</td></tr>
+        <tr><td>Central Park Boathouse (Day 5)</td><td>171887</td></tr>
+        <tr><td>Au Cheval dinner (Day 10)</td><td>Confirmed</td></tr>
+        <tr><td>The Edge (Day 11)</td><td>SRN7Y0M3</td></tr>
+        <tr><td>Louis Vuitton Chocolate — Erica</td><td>3MCMY96F4BHA</td></tr>
+        <tr><td>Louis Vuitton Chocolate — Monica</td><td>3MCN4N43CK2U</td></tr>
+        <tr><td>Louis Vuitton Chocolate — Christine</td><td>3MCN7M4ATU7G</td></tr>
+        <tr><td>Lillie's Brunch (Day 13)</td><td>BOOKED</td></tr>
+        <tr><td>GO Airlink Arrival</td><td>#835618</td></tr>
+        <tr><td>GO Airlink Departure</td><td>#835619</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="dsec">
+    <div class="dsec-ttl">Trip Days — tap to expand</div>
+    <div id="dc"></div>
+  </div>
+</div>
+
+<div class="ftr">
+  <strong>What an incredible trip — 7 chicks, 2 blokes and ONE BIG APPLE.</strong>
+  Memories made forever 🗽
+</div>
+
+<script>
+// dir: {label, url, mode} — mode: walk|subway|uber
+// mode icons: walk=🚶, subway=🚇, uber=🚕
+const days=[
+{num:0,lbl:"Monday 4th May",ttl:"Travel Day ✈️",wth:"17°C · Mild & partly cloudy · light jacket",tn:null,acts:[
+  {t:"5:30am",n:"Depart home — First Choice Shuttle ($100 cash)",s:"confirmed",dir:null,c:null,w:null,tip:"Allow plenty of time for international check-in & bag drop at Sydney Airport."},
+  {t:"9:10am",n:"Depart Sydney — Qantas QF3",s:"confirmed",dir:null,c:"QF3",w:null,tip:"3-hour flight to Auckland. Auckland is 2 hours ahead of Sydney."},
+  {t:"2:10pm",n:"Arrive Auckland (NZ) — MUST DISEMBARK for layover",s:"confirmed",dir:null,c:null,w:null,tip:"Layover: 2 hours 15 minutes. You must leave the aircraft."},
+  {t:"4:25pm",n:"Depart Auckland — QF3 continues direct to JFK",s:"confirmed",dir:null,c:null,w:null,tip:"Flight duration: 15 hours 55 minutes."},
+  {t:"3:00pm",n:"Romina arrives separately — Flight AC714, LaGuardia",s:null,dir:null,c:null,w:null,tip:"Separate arrival at LGA."},
+  {t:"4:20pm",n:"Rom/Cav's arrive at JFK",s:"confirmed",dir:null,c:null,w:null,tip:"Allow 60–90 min through immigration, baggage & customs."},
+  {t:"~5:30pm",n:"Contact GO Airlink driver on exit",s:"confirmed",dir:null,c:"GO Airlink #835618 · goairlinkshuttle.com",w:null,tip:"GO Airlink tracks your flight automatically. Confirm pickup point on their app."},
+  {t:"~6:30pm",n:"Arrive Park Central Hotel — check in & freshen up",s:"confirmed",dir:null,c:null,w:null,tip:"Romina will likely already be there. Dinner at hotel or head out to explore Times Square."},
+]},
+{num:1,lbl:"Tuesday 5th May",ttl:"Big Bus · Empire State · Skylark",wth:"17°C · Cool mornings, mild afternoons · jacket for evening",tn:null,acts:[
+  {t:"8:45am",n:"Leave Park Central Hotel",s:null,
+   dir:{label:"Walk 8 min → M&M's World (Big Bus pickup)",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/M%26M's+World+New+York,+1600+Broadway,+New+York,+NY+10019/@40.7628,−73.9834,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585a3a28b5ef:0xad9c0c5e9dfe0a43!2m2!1d-73.9846839!2d40.7598754!3e2",mode:"walk"},
+   c:null,w:null,tip:"Head south on 7th Ave, turn left on 52nd St, M&M's World is on Broadway. The Big Bus stop is right outside."},
+  {t:"9:00am",n:"Big Bus — Downtown Loop (Red Route)",s:"confirmed",dir:null,c:"Cavallaro: HTCTFR29 · Burgess: EYZG031X · Romano: GHTHBMCD",w:null,tip:"Hop-On Hop-Off · ~90 min · Bus every 20 min. Tickets in Big Bus app."},
+  {t:"10:30am",n:"Walk to Hope Sculpture",s:null,
+   dir:{label:"Walk 6 min → Hope Sculpture",url:"https://www.google.com/maps/dir/M%26M's+World+New+York,+1600+Broadway/Hope+sculpture,+New+York,+NY/@40.7605,-73.984,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2585a3a28b5ef:0xad9c0c5e9dfe0a43!2m2!1d-73.9846839!2d40.7598754!1m5!1m1!1s0x89c2585ce7deabf7:0x8b4a0acf1a8e9f20!2m2!1d-73.9838!2d40.7617!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"11:00am",n:"Big Bus — Uptown Loop (Blue Route)",s:"confirmed",dir:null,c:null,w:null,tip:"~75 min · Bus every 30 min. Back at Hope Sculpture area ~12:15pm."},
+  {t:"12:15pm",n:"Lunch near Hope Sculpture",s:null,
+   dir:{label:"Walk 6 min → lunch options",url:"https://www.google.com/maps/dir/Hope+sculpture,+New+York/The+Original+Soup+Man,+259A+W+55th+St,+New+York,+NY+10019/@40.7651,-73.9851,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2585ce7deabf7:0x8b4a0acf1a8e9f20!2m2!1d-73.9838!2d40.7617!1m5!1m1!1s0x89c258f44f4a4a4b:0x6c1b3a6e0a2f0a0a!2m2!1d-73.9851!2d40.7651!3e2",mode:"walk"},
+   c:null,w:null,tip:"Options: The Original Soup Kitchen (Seinfeld famous) · Shake Shack (1 min walk) · Street cart"},
+  {t:"1:30pm",n:"Christmas Cottage / The Plaza Hotel",s:null,
+   dir:{label:"Walk 13 min → Christmas Cottage / Plaza Hotel",url:"https://www.google.com/maps/dir/The+Original+Soup+Man,+259A+W+55th+St/The+Plaza+Hotel,+768+5th+Ave,+New+York,+NY+10019/@40.7652,-73.9793,16z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f44f4a4a4b:0x6c1b3a6e0a2f0a0a!2m2!1d-73.9851!2d40.7651!1m5!1m1!1s0x89c258fa8ac2cd01:0x4957c73b92e8f23d!2m2!1d-73.9747!2d40.7645!3e2",mode:"walk"},
+   c:null,w:null,tip:"Turtle Doves $55 USD · The Plaza Hotel item $30 USD."},
+  {t:"2:00pm",n:"New York Public Library — Schwarzman Building (FREE)",s:"tobook",
+   dir:{label:"Walk 21 min → NY Public Library",url:"https://www.google.com/maps/dir/The+Plaza+Hotel,+768+5th+Ave,+New+York/New+York+Public+Library,+476+5th+Ave,+New+York,+NY+10018/@40.7567,-73.9815,16z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258fa8ac2cd01:0x4957c73b92e8f23d!2m2!1d-73.9747!2d40.7645!1m5!1m1!1s0x89c259b7f0e8e225:0x9e2cf81f9b4d3f6a!2m2!1d-73.9815!2d40.7532!3e2",mode:"walk"},
+   c:null,w:"Book Sunday 26th April at 10am — tickets released Sunday mornings.",tip:"1 hour inside. Stunning Beaux-Arts building."},
+  {t:"3:00pm",n:"Bryant Park — sit & rest",s:null,
+   dir:{label:"Walk 1 min → Bryant Park",url:"https://www.google.com/maps/dir/New+York+Public+Library,+476+5th+Ave/Bryant+Park,+New+York,+NY+10018/@40.7536,-73.9833,18z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c259b7f0e8e225:0x9e2cf81f9b4d3f6a!2m2!1d-73.9815!2d40.7532!1m5!1m1!1s0x89c259b7316dba6f:0x2a985d2e62d7b8f9!2m2!1d-73.9833!2d40.7536!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"3:30pm",n:"Grand Central Terminal — Whispering Gallery",s:null,
+   dir:{label:"Walk 8 min → Grand Central Terminal",url:"https://www.google.com/maps/dir/Bryant+Park,+New+York/Grand+Central+Terminal,+89+E+42nd+St,+New+York,+NY+10017/@40.7543,-73.9806,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c259b7316dba6f:0x2a985d2e62d7b8f9!2m2!1d-73.9833!2d40.7536!1m5!1m1!1s0x89c2592eee80b84f:0x5059e35f3ccd3524!2m2!1d-73.9772!2d40.7527!3e2",mode:"walk"},
+   c:null,w:null,tip:"Whisper into the corner arch and be heard from across the room!"},
+  {t:"3:45pm",n:"Table of Love Statue — 237 Park Ave",s:null,
+   dir:{label:"Walk 7 min → Table of Love, 237 Park Ave",url:"https://www.google.com/maps/dir/Grand+Central+Terminal,+89+E+42nd+St/237+Park+Ave,+New+York,+NY+10017/@40.7538,-73.978,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2592eee80b84f:0x5059e35f3ccd3524!2m2!1d-73.9772!2d40.7527!1m5!1m1!1s0x89c2592eee80b84f:0x5059e35f3ccd3525!2m2!1d-73.9764!2d40.754!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"3:50pm",n:"Greenacre Park — waterfall, opened 1st April",s:"optional",
+   dir:{label:"Walk → Greenacre Park, 217 E 51st St",url:"https://www.google.com/maps/dir/237+Park+Ave,+New+York/Greenacre+Park,+217+E+51st+St,+New+York,+NY+10022/@40.756,-73.972,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2592eee80b84f:0x5059e35f3ccd3525!2m2!1d-73.9764!2d40.754!1m5!1m1!1s0x89c258fb6b71b1cd:0x39b3b20b12a65c5b!2m2!1d-73.9694!2d40.7558!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"4:00pm",n:"Chrysler Building lobby walk-through",s:"optional",
+   dir:{label:"Walk 3 min → Chrysler Building, 405 Lexington Ave",url:"https://www.google.com/maps/dir/Grand+Central+Terminal,+89+E+42nd+St/Chrysler+Building,+405+Lexington+Ave,+New+York,+NY+10174/@40.7522,-73.9751,18z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2592eee80b84f:0x5059e35f3ccd3524!2m2!1d-73.9772!2d40.7527!1m5!1m1!1s0x89c258f8c6c9b00b:0x85c9bc5a60e0c975!2m2!1d-73.9754!2d40.7516!3e2",mode:"walk"},
+   c:null,w:null,tip:"Art Deco lobby — free, no tickets needed. One of NYC's most beautiful interiors."},
+  {t:"4:30pm",n:"Return to Park Central Hotel — rest before dinner",s:null,
+   dir:{label:"Subway 19 min → Park Central Hotel",url:"https://www.google.com/maps/dir/Chrysler+Building,+405+Lexington+Ave/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/@40.757,-73.9783,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f8c6c9b00b:0x85c9bc5a60e0c975!2m2!1d-73.9754!2d40.7516!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"5:40pm",n:"Leave hotel for dinner",s:null,
+   dir:{label:"Subway 10 min → Tacombi, Empire State Building",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Tacombi+at+the+Empire+State+Building,+20+W+34th+St,+New+York,+NY+10001/@40.7572,-73.9869,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c259b4b5d80c47:0x1e6e8e8e8e8e8e8e!2m2!1d-73.9866!2d40.7484!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"6:00pm",n:"Dinner — Tacombi, Empire State Building 🌮",s:"confirmed",dir:null,c:null,w:null,tip:"Tacos, margaritas & churros. It's Cinco de Mayo! 🎉"},
+  {t:"7:45pm",n:"Empire State Building",s:"confirmed",dir:null,c:"XQKPHCBS (Erica paid · $91.50 USD each · all paid)",w:null,tip:null},
+  {t:"9:15pm",n:"The Skylark Rooftop Bar",s:"optional",
+   dir:{label:"Walk 20 min back to hotel (or cab)",url:"https://www.google.com/maps/dir/The+Skylark,+200+W+39th+St,+New+York/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/@40.7567,-73.9847,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c25904ae6bd97b:0x1a0d5c8b4e4b6c7d!2m2!1d-73.9882!2d40.7551!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!3e2",mode:"walk"},
+   c:null,w:"ALL PATRONS MUST BE 21+",tip:null},
+]},
+{num:2,lbl:"Wednesday 6th May",ttl:"Woodbury Common · Broadway Night",wth:"18°C · Comfortable shopping · layers for theatre",tn:"Christine & Angelina arrive LGA at 7:36pm. Travel to the Majestic Theatre is 30–50 min — they'll likely arrive after the 8pm Beaches curtain. Plan for interval or meet after.",acts:[
+  {t:"8:00am",n:"Leave Park Central Hotel",s:null,
+   dir:{label:"Walk 10 min → Bus stop, 1651 Broadway at W 51st St",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/1651+Broadway,+New+York,+NY+10019/@40.7641,-73.9836,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585e0e0e0e0e:0x0e0e0e0e0e0e0e0e!2m2!1d-73.9836!2d40.7637!3e2",mode:"walk"},
+   c:null,w:"Must arrive at stop by 8:15am — 15 min before departure.",tip:null},
+  {t:"8:30am",n:"Bus to Woodbury Common Premium Outlets 🛍️",s:"confirmed",dir:null,c:"D6KKGH46 (Erica paid x4 · $45 USD)",w:null,tip:"Shop 'til you drop!"},
+  {t:"~10:00am",n:"Arrive Woodbury Common — shop!",s:null,dir:null,c:null,w:null,tip:"Hundreds of designer brands at outlet prices."},
+  {t:"2:00pm",n:"Return bus — Bus Plaza 2, outside Saks 5th Ave",s:"confirmed",dir:null,c:null,w:"Don't be late — bus won't wait!",tip:null},
+  {t:"~3:30pm",n:"Back at hotel — rest & freshen up",s:null,dir:null,c:null,w:null,tip:"Bring glasses tonight!"},
+  {t:"5:15pm",n:"Leave hotel for dinner",s:null,
+   dir:{label:"Walk 13 min → Carmine's Italian, Times Square",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Carmine's+Italian+Restaurant,+200+W+44th+St,+New+York,+NY+10036/@40.7594,-73.9842,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585b3c3c3c3c:0x3c3c3c3c3c3c3c3c!2m2!1d-73.9878!2d40.7579!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"5:30pm",n:"Dinner — Carmine's Italian, Times Square",s:"confirmed",dir:null,c:"2114721485",w:null,tip:"Family-style Italian · ~$40 USD pp · 5 people."},
+  {t:"7:00pm",n:"HAMILTON — Richard Rodgers Theatre",s:"confirmed",
+   dir:{label:"Walk 11 min → Richard Rodgers Theatre, 226 W 46th St",url:"https://www.google.com/maps/dir/Carmine's+Italian+Restaurant,+200+W+44th+St/Richard+Rodgers+Theatre,+226+W+46th+St,+New+York,+NY+10036/@40.759,-73.9877,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2585b3c3c3c3c:0x3c3c3c3c3c3c3c3c!2m2!1d-73.9878!2d40.7579!1m5!1m1!1s0x89c25856e4e4e4e4:0xe4e4e4e4e4e4e4e4!2m2!1d-73.9896!2d40.7594!3e2",mode:"walk"},
+   c:"T021526624082",w:null,tip:"~2h 45m show."},
+  {t:"8:00pm",n:"BEACHES — Majestic Theatre",s:"confirmed",dir:null,c:"T021526852294T",w:null,tip:"Group splits — some to Hamilton, some to Beaches. Ends ~10:20pm."},
+  {t:"After show",n:"Dear Irving on Hudson Rooftop Bar",s:"optional",
+   dir:{label:"Walk or cab → Dear Irving, Aliz Hotel, 310 W 40th St",url:"https://www.google.com/maps/dir/Majestic+Theatre,+247+W+44th+St/Dear+Irving+on+Hudson,+310+W+40th+St,+New+York,+NY+10018/@40.7574,-73.9906,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c25856a5a5a5a5:0xa5a5a5a5a5a5a5a5!2m2!1d-73.9881!2d40.7586!1m5!1m1!1s0x89c25909b5b5b5b5:0xb5b5b5b5b5b5b5b5!2m2!1d-73.9915!2d40.7563!3e2",mode:"walk"},
+   c:null,w:"21+ only",tip:"40th & 41st floor of the Aliz Hotel. Stunning views of the city."},
+]},
+{num:3,lbl:"Thursday 7th May",ttl:"Little Island · Yankees · Nobu",wth:"18°C · Good outdoor day · layer up for open-air stadium",tn:null,acts:[
+  {t:"9:00am",n:"Leave hotel (bring glasses)",s:null,
+   dir:{label:"Subway 26 min → Little Island, Pier 55",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Little+Island,+Pier+55,+Hudson+River+Park,+New+York,+NY+10014/@40.7488,-74.0085,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c259bc6c6c6c6c:0x6c6c6c6c6c6c6c6c!2m2!1d-74.0085!2d40.7327!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"9:30am",n:"Little Island — Pier 55",s:null,dir:null,c:null,w:null,tip:"Stunning artificial island & public park in the Hudson River. Beautiful morning walk."},
+  {t:"11:00am",n:"Subway to Yankee Stadium",s:null,
+   dir:{label:"Subway 40 min → Yankee Stadium",url:"https://www.google.com/maps/dir/Little+Island,+Pier+55/Yankee+Stadium,+1+E+161st+St,+Bronx,+NY+10451/@40.7866,-73.9918,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c259bc6c6c6c6c:0x6c6c6c6c6c6c6c6c!2m2!1d-74.0085!2d40.7327!1m5!1m1!1s0x89c2f60eae6d1f41:0x27d08de6a5ef8541!2m2!1d-73.9262!2d40.8296!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"12:35pm",n:"⚾ Yankees vs Texas Rangers — PLAY BALL!",s:"confirmed",dir:null,c:"47-32010/NY5 · Sec 426, Row 5, Seats 17–21 · Ticketmaster app",w:null,tip:"Try the New York hot dog! Game approx 2.5–3 hrs."},
+  {t:"~4:15pm",n:"Back to hotel",s:null,
+   dir:{label:"Subway ~40 min → Park Central Hotel",url:"https://www.google.com/maps/dir/Yankee+Stadium,+1+E+161st+St,+Bronx/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/@40.798,-73.948,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2f60eae6d1f41:0x27d08de6a5ef8541!2m2!1d-73.9262!2d40.8296!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"6:20pm",n:"Leave hotel for dinner",s:null,
+   dir:{label:"Walk 7 min → Nobu, 40 W 57th St",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Nobu+57,+40+W+57th+St,+New+York,+NY+10019/@40.7648,-73.9812,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258f9e9e9e9e9:0xe9e9e9e9e9e9e9e9!2m2!1d-73.9774!2d40.7641!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"6:15pm",n:"Dinner — Nobu, 40 W 57th St 🍱",s:"confirmed",dir:null,c:"2111674166",w:null,tip:"World-famous Japanese restaurant."},
+  {t:"9:00pm",n:"Chris & Nick arrive — Flight AC720, LaGuardia",s:null,dir:null,c:null,w:null,tip:"Welcome Chris & Nick! 🎉"},
+]},
+{num:4,lbl:"Friday 8th May",ttl:"Liberty Cruise · High Line · Summit",wth:"19°C · Warming up · breezy on the water, jacket for cruise",tn:"Liberty Cruise doesn't finish until ~12:15pm — no Hudson Yards until 12:30pm at the earliest.",acts:[
+  {t:"9:00am",n:"Leave hotel — head to Pier 83",s:null,
+   dir:{label:"Subway 23 min → Pier 83, W 42nd St & 12th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Ellis+Island+Ferry+Building,+Ellis+Is,+Jersey+City,+NJ+07305,+United+States/@40.7335188,-74.0595989,13z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c251f60b1a6311:0x9424693561a0b446!2m2!1d-74.0418944!2d40.6996502!2m3!6e0!7e2!8j1778185800!3e3",mode:"subway"},
+   c:null,w:null,tip:"3 min walk to subway, then 20 min ride. Grab breakfast near Pier 83 while waiting for boarding."},
+  {t:"10:30am",n:"Boarding opens — Liberty Cruise, Pier 83",s:"confirmed",dir:null,c:"CL-1774320471-69e1 (Erica · 4 tix Apple Wallet)",w:null,tip:"Ferry departs 11:15am · 1-hour scenic cruise past Statue of Liberty."},
+  {t:"~12:15pm",n:"Liberty Cruise returns — walk to Hudson Yards",s:null,
+   dir:{label:"Walk 19 min → Hudson Yards",url:"https://www.google.com/maps/dir/Pier+83+Midtown,+W+42nd+St+%26,+12th+Ave,+New+York,+NY+10036,+United+States/Hudson+Yards,+20+Hudson+Yards,+New+York,+NY+10001,+United+States/@40.7580579,-74.0075198,16z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2594fd618cae5:0xa9ea8a26b498dd00!2m2!1d-74.0014531!2d40.7627407!1m5!1m1!1s0x89c259b6a970b29d:0x90ed53a6a731957e!2m2!1d-74.0010646!2d40.7533803!2m3!6e0!7e2!8j1778230800!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"12:00pm",n:"Hudson Yards — Vessel",s:"confirmed",dir:null,c:"NGF6M3VN (Erica · 4 tix Apple Wallet · $12 USD)",w:null,tip:"1-hour interactive climb experience · High-end mall right next door."},
+  {t:"1:00pm",n:"Dinosaur — brief stop",s:null,
+   dir:{label:"Walk → Dinosaur, 450 W 31st St",url:"https://www.google.com/maps/dir/Hudson+Yards,+20+Hudson+Yards,+New+York,+NY+10001,+United+States/Dinosaur,+450+W+31st+St,+New+York,+NY+10001,+United+States/@40.752941,-74.0036168,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259b6a970b29d:0x90ed53a6a731957e!2m2!1d-74.0010646!2d40.7533803!1m5!1m1!1s0x89c259004dfbd2cb:0x71874206c972037b!2m2!1d-74.0010064!2d40.7520481!2m3!6e0!7e2!8j1778230800!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"1:15pm",n:"Walk the High Line Boardwalk (1 hr)",s:null,
+   dir:{label:"Walk → High Line Boardwalk",url:"https://www.google.com/maps/dir/Dinosaur,+450+W+31st+St,+New+York,+NY+10001,+United+States/High+Line+Boardwalk,+New+York,+NY+10001,+United+States/@40.7541679,-74.0042006,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259004dfbd2cb:0x71874206c972037b!2m2!1d-74.0010064!2d40.7520481!1m5!1m1!1s0x89c2590024ed7173:0x88bc82f98ecb56e4!2m2!1d-74.0036501!2d40.756339!2m3!6e0!7e2!8j1778230800!3e2",mode:"walk"},
+   c:null,w:null,tip:"Elevated park above the city — walk south toward Chelsea Market."},
+  {t:"2:15pm",n:"Lunch — Chelsea Market",s:null,
+   dir:{label:"Walk → Chelsea Market, 75 9th Ave",url:"https://www.google.com/maps/dir/High+Line+Boardwalk,+New+York,+NY+10001,+United+States/Chelsea+Market,+75+9th+Ave,+New+York,+NY+10011,+United+States/@40.7493991,-74.0141173,15z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2590024ed7173:0x88bc82f98ecb56e4!2m2!1d-74.0036501!2d40.756339!1m5!1m1!1s0x89c259bf144c69c3:0x7e61762e972dc0a2!2m2!1d-74.0061439!2d40.7424396!2m3!6e0!7e2!8j1778230800!3e2",mode:"walk"},
+   c:null,w:null,tip:"Foodie heaven — lots of options inside."},
+  {t:"~3:30pm",n:"Subway to Ground Zero",s:null,
+   dir:{label:"Subway 17 min → Ground Zero, Greenwich St",url:"https://www.google.com/maps/dir/Chelsea+Market,+75+9th+Ave,+New+York,+NY+10011,+United+States/Ground+Zero,+Greenwich+St,+New+York,+NY+10007,+United+States/@40.7262951,-74.0224937,14z/data=!3m1!4b1!4m18!4m17!1m5!1m1!1s0x89c259bf144c69c3:0x7e61762e972dc0a2!2m2!1d-74.0061439!2d40.7424396!1m5!1m1!1s0x89c25b47e26b0d4d:0x573349b2dd528582!2m2!1d-74.0132182!2d40.7115647!2m3!6e0!7e2!8j1778252400!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"~3:50pm",n:"Charging Bull — Bowling Green",s:null,
+   dir:{label:"Walk 12 min → Charging Bull, Bowling Green",url:"https://www.google.com/maps/dir/Ground+Zero,+Greenwich+St,+New+York,+NY+10007,+United+States/Charging+Bull,+Bowling+Green,+New+York,+NY+10004,+United+States/@40.7085696,-74.0159561,17z/data=!3m2!4b1!5s0x89c259bf5c13b39f:0x1e54ca82f40db960!4m18!4m17!1m5!1m1!1s0x89c25b47e26b0d4d:0x573349b2dd528582!2m2!1d-74.0132182!2d40.7115647!1m5!1m1!1s0x89c2589a17a81551:0xc7db393ae1eff521!2m2!1d-74.0134499!2d40.7055746!2m3!6e0!7e2!8j1778255100!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"~4:05pm",n:"Financial District → Battery Park",s:null,
+   dir:{label:"Walk 9 min → Financial District, then 11 min → Battery Park",url:"https://www.google.com/maps/dir/Charging+Bull,+Bowling+Green,+New+York,+NY+10004,+United+States/Battery+Park+City,+New+York,+NY,+USA/@40.7096804,-74.0146606,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2589a17a81551:0xc7db393ae1eff521!2m2!1d-74.0134499!2d40.7055746!1m5!1m1!1s0x89c25a1aee6620bb:0x624d5c815c1b2c2e!2m2!1d-74.0158441!2d40.7115786!2m3!6e0!7e2!8j1778256000!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"~4:35pm",n:"Stone Street Historic District",s:null,
+   dir:{label:"Walk 6 min → Stone Street Historic District",url:"https://www.google.com/maps/dir/Battery+Park+City,+New+York,+NY,+USA/Stone+Street+Historic+District,+30+Stone+St,+New+York,+NY+10004,+United+States/@40.7071187,-74.0183492,16z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c25a1aee6620bb:0x624d5c815c1b2c2e!2m2!1d-74.0158441!2d40.7115786!1m5!1m1!1s0x89c25b6474934d4f:0x9ca7bde0b4af5aab!2m2!1d-74.0105855!2d40.7041559!2m3!6e0!7e2!8j1778258700!3e3",mode:"walk"},
+   c:null,w:null,tip:"Famous cobblestone laneway with vibrant outdoor dining scene."},
+  {t:"~6:00pm",n:"Optional dinner at Stone Street",s:"optional",dir:null,c:null,w:null,tip:"Leave no later than 6pm to make Summit on time."},
+  {t:"8:00pm",n:"SUMMIT One Vanderbilt — sky experience",s:"confirmed",
+   dir:{label:"Subway 23 min → Summit One Vanderbilt (from Bowling Green station)",url:"https://www.google.com/maps/dir/Stone+Street+Historic+District,+30+Stone+St,+New+York,+NY+10004,+United+States/SUMMIT+One+Vanderbilt,+45+E+42nd+St,+New+York,+NY+10017,+United+States/@40.7299718,-74.036568,13z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c25b6474934d4f:0x9ca7bde0b4af5aab!2m2!1d-74.0105855!2d40.7041559!1m5!1m1!1s0x89c259ee2035b277:0x5e86025852d8fe6e!2m2!1d-73.9787253!2d40.7527746!2m3!6e0!7e2!8j1778258700!3e3",mode:"subway"},
+   c:"20260323-43248990 (Erica · 4 tix Apple Wallet · $55.25 USD)",w:null,tip:"Take subway from Bowling Green (Broadway & Whitehall St). 60–90 min experience. IT'SUGAR or M&M's World in Times Square on the way back!"},
+]},
+{num:5,lbl:"Saturday 9th May",ttl:"Central Park Bikes · Comedy Cellar",wth:"19°C · Pleasant biking weather · light layers",tn:null,acts:[
+  {t:"8:50am",n:"Leave hotel — walk to bike rental",s:null,
+   dir:{label:"Walk → Bike Rental Central Park, 1391 6th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Bike+Rental+Central+Park,+1391+6th+Ave,+New+York,+NY+10019,+United+States/@40.76394,-73.9806987,18z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c259a68452b44f:0x4b14b2793295f99d!2m2!1d-73.9777297!2d40.7640059!2m3!6e0!7e2!8j1778258700!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"9:00am",n:"Bike Rent NYC — Central Park full loop (9.8 km)",s:"tobook",dir:null,c:null,w:"Pay on the day — no advance booking needed.",tip:"Push bike $39 · Electric $65 · Scooter $69 USD all day hire."},
+  {t:"1:00pm",n:"Lunch — Central Park Boathouse",s:"confirmed",dir:null,c:"171887",w:null,tip:"Chain bikes outside the restaurant."},
+  {t:"3:00pm",n:"Return bikes — walk back to hotel",s:null,
+   dir:{label:"Walk → Park Central Hotel from bike rental",url:"https://www.google.com/maps/dir/Bike+Rental+Central+Park,+1391+6th+Ave,+New+York,+NY+10019,+United+States/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/@40.7642526,-73.9805788,18z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259a68452b44f:0x4b14b2793295f99d!2m2!1d-73.9777297!2d40.7640059!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!2m3!6e0!7e2!8j1778258700!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"Evening",n:"Dinner — L'industrie Pizzeria, West Village",s:null,
+   dir:{label:"Subway → L'industrie Pizzeria, 104 Christopher St",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/L%E2%80%99industrie+Pizzeria+West+Village,+104+Christopher+St,+New+York,+NY+10014,+United+States/@40.748805,-74.0144802,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2599568ac63f7:0x78fb89ff91782eb0!2m2!1d-74.004911!2d40.7332284!2m3!6e0!7e2!8j1778258700!3e3",mode:"subway"},
+   c:null,w:null,tip:"No booking — walk-in, pizza by the slice."},
+  {t:"9:00pm",n:"Comedy Cellar — 117 MacDougal St (bring glasses)",s:"confirmed",
+   dir:{label:"Walk 4 min → Comedy Cellar, 117 MacDougal St",url:"https://www.google.com/maps/dir/L%E2%80%99industrie+Pizzeria+West+Village,+104+Christopher+St,+New+York,+NY+10014,+United+States/Comedy+Cellar,+117+MacDougal+St,+New+York,+NY+10012,+United+States/@40.7314082,-74.0048539,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2599568ac63f7:0x78fb89ff91782eb0!2m2!1d-74.004911!2d40.7332284!1m5!1m1!1s0x89c2599180d8339b:0xd2c25939c1d48c83!2m2!1d-74.0005639!2d40.7302002!2m3!6e0!7e2!8j1778258700!3e2",mode:"walk"},
+   c:"9604426",w:"Arrive by 8:30pm — Fat Black Pussycat Bar.",tip:"Try the homemade pineapple-infused vodka — a Comedy Cellar signature, served in a martini glass with pineapple chunks. 🍍"},
+  {t:"After",n:"Subway back to Times Square",s:null,
+   dir:{label:"Subway → Times Square from Comedy Cellar",url:"https://www.google.com/maps/dir/Comedy+Cellar,+117+MacDougal+St,+New+York,+NY+10012,+United+States/Times+Square,+Manhattan,+NY+10036,+United+States/@40.7440767,-74.0136229,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2599180d8339b:0xd2c25939c1d48c83!2m2!1d-74.0005639!2d40.7302002!1m5!1m1!1s0x89c25855c6480299:0x55194ec5a1ae072e!2m2!1d-73.9855426!2d40.7579747!2m3!6e0!7e2!8j1778258700!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+]},
+{num:6,lbl:"Sunday 10th May — Mother's Day 🌸",ttl:"Brooklyn Bridge · DUMBO · Horse Carriage",wth:"20°C · Lovely spring day · layers for the evening carriage ride",tn:null,acts:[
+  {t:"9:00am",n:"Leave hotel — optional Times Square Church stop",s:null,
+   dir:{label:"Walk → Times Square Church (optional, 10 min)",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Times+Square+Church,+237+W+51st+St,+New+York,+NY+10019/@40.762,-73.9846,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585c4c4c4c4c:0x4c4c4c4c4c4c4c4c!2m2!1d-73.9877!2d40.7623!3e2",mode:"walk"},
+   c:null,w:null,tip:"10-min pop-in to experience the choir — worth it on Mother's Day."},
+  {t:"~9:30am",n:"Brunch — Katz's Deli, Lower East Side",s:null,
+   dir:{label:"Subway ~35 min → Katz's Deli, 205 E Houston St",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Katz%27s+Delicatessen,+205+E+Houston+St,+New+York,+NY+10002/@40.7383,-73.9925,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2594c4c4c4c4c:0x4c4c4c4c4c4c4c4c!2m2!1d-73.9872!2d40.7223!3e3",mode:"subway"},
+   c:null,w:"MOTHER'S DAY: Expect 30–45 min queue — arrive as early as possible!",tip:"Famous from When Harry Met Sally! Allow 1–1.5 hrs total."},
+  {t:"11:00am",n:"Walk Brooklyn Bridge",s:null,
+   dir:{label:"Walk 20 min → Brooklyn Bridge entrance",url:"https://www.google.com/maps/dir/Katz%27s+Delicatessen,+205+E+Houston+St,+New+York/Brooklyn+Bridge+Promenade,+Brooklyn,+NY,+USA/@40.7145,-73.9887,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2594c4c4c4c4c:0x4c4c4c4c4c4c4c4c!2m2!1d-73.9872!2d40.7223!1m5!1m1!1s0x89c25a3a448cd42b:0xa0af11e19e7b8ad!2m2!1d-73.9955821!2d40.7050816!3e2",mode:"walk"},
+   c:null,w:null,tip:"45–60 min walk across with photo stops. Stunning views of the Manhattan skyline."},
+  {t:"12:30pm",n:"DUMBO — Manhattan Bridge View",s:null,
+   dir:{label:"Walk → DUMBO Manhattan Bridge View, Washington St",url:"https://www.google.com/maps/dir/Brooklyn+Bridge+Promenade,+Brooklyn,+NY,+USA/DUMBO+Manhattan+Bridge+View,+39-21+Washington+St,+Brooklyn,+NY+11201,+United+States/@40.7006809,-73.9972404,16z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c25a3a448cd42b:0xa0af11e19e7b8ad!2m2!1d-73.9955821!2d40.7050816!1m5!1m1!1s0x89c25a31658fd477:0x991b3e313969d387!2m2!1d-73.9895698!2d40.7033165!2m3!6e0!7e2!8j1778407200!3e2",mode:"walk"},
+   c:null,w:null,tip:"Classic photo: stand on Washington Street and frame the Manhattan Bridge. Explore the neighbourhood and waterfront."},
+  {t:"4:00pm",n:"Peter Pan Donut & Pastry Shop — Greenpoint 🍩",s:null,
+   dir:{label:"Subway → Peter Pan Donut, 727 Manhattan Ave, Greenpoint",url:"https://www.google.com/maps/dir/DUMBO+Manhattan+Bridge+View,+39-21+Washington+St,+Brooklyn,+NY+11201,+United+States/Peter+Pan+Donut+%26+Pastry+Shop,+727+Manhattan+Ave,+Brooklyn,+NY+11222,+United+States/@40.7124711,-73.9960673,14z/data=!3m1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m19!4m18!1m5!1m1!1s0x89c25a31658fd477:0x991b3e313969d387!2m2!1d-73.9895698!2d40.7033165!1m5!1m1!1s0x89c259441e231f7d:0x53866a30cd645982!2m2!1d-73.952254!2d40.7261049!2m3!6e0!7e2!8j1778407200!3e3",mode:"subway"},
+   c:null,w:null,tip:"Legendary doughnuts! Don't skip these."},
+  {t:"~5:00pm",n:"Head back to hotel before dinner",s:null,
+   dir:{label:"Subway → Park Central Hotel from Greenpoint",url:"https://www.google.com/maps/dir/Peter+Pan+Donut+%26+Pastry+Shop,+727+Manhattan+Ave,+Brooklyn,+NY+11222,+United+States/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/@40.7397119,-74.005185,13z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259441e231f7d:0x53866a30cd645982!2m2!1d-73.952254!2d40.7261049!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!2m3!6e0!7e2!8j1778407200!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"6:00pm",n:"Dinner — Ci Siamo, 440 W 33rd St",s:"confirmed",
+   dir:{label:"Subway → Ci Siamo, 440 W 33rd St from hotel",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Ci+Siamo,+440+W+33rd+St+Suite+%23100,+New+York,+NY+10001,+United+States/@40.7587506,-73.9993897,15z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c259f76ebbc8fd:0xc9b0aa23942bbeb0!2m2!1d-73.9989141!2d40.7526152!2m3!6e0!7e2!8j1778441400!3e3",mode:"subway"},
+   c:"#642AWF3UMG6W (x5) · #642B6TDXGH5T (x4)",w:null,tip:null},
+  {t:"~8:00pm",n:"Dessert — Rivareno Gelato, 195 Spring St",s:null,
+   dir:{label:"Subway → Rivareno Gelato, 195 Spring St",url:"https://www.google.com/maps/dir/Ci+Siamo,+440+W+33rd+St+Suite+%23100,+New+York,+NY+10001,+United+States/Rivareno+Gelato,+195+Spring+St,+New+York,+NY+10012,+United+States/@40.7389799,-74.0189497,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259f76ebbc8fd:0xc9b0aa23942bbeb0!2m2!1d-73.9989141!2d40.7526152!1m5!1m1!1s0x89c259a0c3ef62ad:0x6d14a257c5d8d2a3!2m2!1d-74.0031955!2d40.7252776!2m3!6e0!7e2!8j1778446800!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"9:00pm",n:"🐴 NYC Horse Carriage Ride — Central Park",s:"confirmed",
+   dir:{label:"Subway → 200 Central Park South (leave gelato by 8:30pm!)",url:"https://www.google.com/maps/dir/Rivareno+Gelato,+195+Spring+St,+New+York,+NY+10012,+United+States/NYC+Horse+%26+Carriage+Ride+-+Official+Central+Park+Tours,+7th+Ave+%26+Central+Park+S,+W+59th+St,+New+York,+NY+10019,+United+States/@40.745903,-74.0127956,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259a0c3ef62ad:0x6d14a257c5d8d2a3!2m2!1d-74.0031955!2d40.7252776!1m5!1m1!1s0x89c2592cb1e752ed:0x933fd6771ddb24cf!2m2!1d-73.9789637!2d40.7663039!2m3!6e0!7e2!8j1778446800!3e3",mode:"subway"},
+   c:"GYGWZAZXNXWM · Get Your Guide · Monica has tix",w:"ARRIVE by 8:55pm at 200 Central Park South. Meet driver at corner of Central Park South & 7th Ave (59th St). Leave gelato NO LATER than 8:30pm.",tip:"Monica paid $783.75 AUD · 9 people · $88 AUD each · all paid."},
+  {t:"After",n:"Walk back to hotel from Central Park South",s:null,
+   dir:{label:"Walk 15 min → Park Central Hotel",url:"https://www.google.com/maps/dir/NYC+Horse+%26+Carriage+Ride+-+Official+Central+Park+Tours,+7th+Ave+%26+Central+Park+S,+W+59th+St,+New+York,+NY+10019,+United+States/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/@40.7657123,-73.9824254,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2592cb1e752ed:0x933fd6771ddb24cf!2m2!1d-73.9789637!2d40.7663039!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!2m3!6e0!7e2!8j1778446800!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+]},
+{num:7,lbl:"Monday 11th May",ttl:"Top of the Rock · Roosevelt Island · SoHo",wth:"20°C · Great views day · breezy on rooftop decks",tn:"Top of the Rock opens at 8:00am.",acts:[
+  {t:"7:45am",n:"Leave hotel",s:null,
+   dir:{label:"Walk → Rockefeller Center, 45 Rockefeller Plaza",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Rockefeller+Center,+45+Rockefeller+Plaza,+New+York,+NY+10111,+United+States/@40.7616715,-73.9830575,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258fecf664df5:0x33d224a0d5dacca2!2m2!1d-73.9786736!2d40.7587402!2m3!6e0!7e2!8j1778446800!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"8:00am",n:"Top of the Rock — Rockefeller Center (~1.5–2 hrs)",s:"confirmed",dir:null,c:"Erica · 4 tix in Apple Wallet",w:null,tip:"Optional extras: Beam Experience +$15 or Skylift +$15 USD. FAO Schwarz at 30 Rockefeller Plaza — Lauren wants a Jellycat! 🧸"},
+  {t:"~9:30am",n:"St. Patrick's Cathedral — photo stop",s:null,
+   dir:{label:"Walk 3 min → St. Patrick's Cathedral, 5th Ave",url:"https://www.google.com/maps/dir/Rockefeller+Center,+45+Rockefeller+Plaza,+New+York,+NY+10111,+United+States/St.+Patrick's+Cathedral,+5th+Ave,+New+York,+NY+10022,+United+States/@40.7588893,-73.9800094,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258fecf664df5:0x33d224a0d5dacca2!2m2!1d-73.9786736!2d40.7587402!1m5!1m1!1s0x89c258fc102f6e51:0x88603435e036aa5b!2m2!1d-73.9761953!2d40.7586117!2m3!6e0!7e2!8j1778446800!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"10:00am",n:"Roosevelt Island Tram",s:null,
+   dir:{label:"Walk 15 min → Roosevelt Island Tramway, 254 E 60th St",url:"https://www.google.com/maps/dir/St.+Patrick's+Cathedral,+5th+Ave,+New+York,+NY+10022,+United+States/Roosevelt+Island+Tramway,+254+E+60th+St,+New+York,+NY+10022,+United+States/@40.7602862,-73.9752787,16z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258fc102f6e51:0x88603435e036aa5b!2m2!1d-73.9761953!2d40.7586117!1m5!1m1!1s0x89c2598c1aef007d:0x4b6720a44d132bf!2m2!1d-73.9641664!2d40.7612789!2m3!6e0!7e2!8j1778446800!3e2",mode:"walk"},
+   c:null,w:null,tip:"$3 USD one way — tap credit card. Trams run every 15 min · 3–4 min ride. Allow 1 hour total."},
+  {t:"11:30am",n:"Lunch — Eataly Flatiron, 200 Fifth Ave",s:null,
+   dir:{label:"Subway 20 min → Eataly Flatiron from Roosevelt Island",url:"https://www.google.com/maps/dir/Roosevelt+Island+Tramway,+254+E+60th+St,+New+York,+NY+10022,+United+States/Eataly+-+Flatiron,+200+5th+Ave,+New+York,+NY+10010,+United+States/@40.7506582,-73.9979158,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2598c1aef007d:0x4b6720a44d132bf!2m2!1d-73.9641664!2d40.7612789!1m5!1m1!1s0x89c259a4119ce269:0x9dec0c979b575972!2m2!1d-73.9900845!2d40.742045!2m3!6e0!7e2!8j1778502600!3e3",mode:"subway"},
+   c:null,w:null,tip:"Lauren: order the SALSWEE dessert! Look for the Dalmatian & Taxi sculpture 'Spot'. Madison Square Park if time permits."},
+  {t:"~1:00pm",n:"Levain Bakery — NYC's most famous cookies 🍪",s:null,
+   dir:{label:"Walk 7 min → Levain Bakery, 2 W 18th St",url:"https://www.google.com/maps/dir/Eataly+-+Flatiron,+200+5th+Ave,+New+York,+NY+10010,+United+States/Levain+Bakery,+2+W+18th+St,+New+York,+NY+10011,+United+States/@40.7402819,-73.9936416,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259a4119ce269:0x9dec0c979b575972!2m2!1d-73.9900845!2d40.742045!1m5!1m1!1s0x89c259658e597bcf:0x84e3ba7b713802!2m2!1d-73.9924834!2d40.7386923!2m3!6e0!7e2!8j1778506200!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"~1:15pm",n:"Washington Square Park — Greenwich Village",s:null,
+   dir:{label:"Walk 14 min → Washington Square Park",url:"https://www.google.com/maps/dir/Levain+Bakery,+2+W+18th+St,+New+York,+NY+10011,+United+States/Washington+Square+Park,+New+York,+NY+10012,+United+States/@40.7352124,-74.0009785,16z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c259658e597bcf:0x84e3ba7b713802!2m2!1d-73.9924834!2d40.7386923!1m5!1m1!1s0x89c25990e23d7e8d:0xfa615edfd1b67e18!2m2!1d-73.997332!2d40.7308838!2m3!6e0!7e2!8j1778506200!3e2",mode:"walk"},
+   c:null,w:null,tip:"Bohemian neighbourhood · Jazz clubs, NYU campus, historic townhouses."},
+  {t:"~1:30pm",n:"Lafayette Grand Café — viral croissants 🥐",s:null,
+   dir:{label:"Walk 6 min → Lafayette Grand Café, 380 Lafayette St",url:"https://www.google.com/maps/dir/Washington+Square+Park,+New+York,+NY+10012,+United+States/Lafayette+Grand+Caf%C3%A9+%26+Bakery,+380+Lafayette+St,+New+York,+NY+10003,+United+States/@40.7291489,-73.9978861,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c25990e23d7e8d:0xfa615edfd1b67e18!2m2!1d-73.997332!2d40.7308838!1m5!1m1!1s0x89c2599ab7535b05:0xaf99878a75a0c0e3!2m2!1d-73.9936512!2d40.7275601!2m3!6e0!7e2!8j1778506200!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"~1:45pm",n:"SoHo — wander, Bloomingdale's & Macy's",s:null,
+   dir:{label:"Walk 5 min → SoHo",url:"https://www.google.com/maps/dir/Lafayette+Grand+Caf%C3%A9+%26+Bakery,+380+Lafayette+St,+New+York,+NY+10003,+United+States/SoHo,+New+York,+NY,+USA/@40.7254607,-74.0003302,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2599ab7535b05:0xaf99878a75a0c0e3!2m2!1d-73.9936512!2d40.7275601!1m5!1m1!1s0x89c2598c5e51e2f3:0xce2f3449f490f818!2m2!1d-74.0019174!2d40.7245908!2m3!6e0!7e2!8j1778506200!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"4:00pm",n:"Romina, Chris & Nick depart — LaGuardia",s:null,dir:null,c:null,w:null,tip:"Farewell! 👋"},
+  {t:"Evening",n:"Dinner — Little Italy or Chinatown",s:null,
+   dir:{label:"Walk 5 min → Little Italy from SoHo",url:"https://www.google.com/maps/dir/SoHo,+New+York,+NY,+USA/Little+Italy,+New+York,+NY+10013,+USA/@40.721874,-74.0020939,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2598c5e51e2f3:0xce2f3449f490f818!2m2!1d-74.0019174!2d40.7245908!1m5!1m1!1s0x89c2598845057def:0x9ecf1b969fbbb484!2m2!1d-73.9973273!2d40.7191413!2m3!6e0!7e2!8j1778506200!3e2",mode:"walk"},
+   c:null,w:null,tip:"Jin Mei Dumplings — 15 for $15, brilliant value!"},
+  {t:"Return",n:"Subway back to hotel",s:null,
+   dir:{label:"Subway → Park Central Hotel from Little Italy",url:"https://www.google.com/maps/dir/Little+Italy,+New+York,+NY+10013,+USA/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/@40.7412571,-74.011616,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2598845057def:0x9ecf1b969fbbb484!2m2!1d-73.9973273!2d40.7191413!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!2m3!6e0!7e2!8j1778533200!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+]},
+{num:8,lbl:"Tuesday 12th May",ttl:"Blue Box Café · The MET · Kelly Clarkson",wth:"21°C · Warm & comfortable · great day for walking",tn:null,acts:[
+  {t:"9:40am",n:"Leave hotel",s:null,
+   dir:{label:"Walk 5–7 min → Blue Box Café, Tiffany's, 727 5th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Blue+Box+Caf%C3%A9+by+Daniel+Boulud,+6th+Floor,+727+5th+Ave,+New+York,+NY+10022,+United+States/@40.7636246,-73.9800154,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258fa8ac2cd01:0x4957c73b92e8f23d!2m2!1d-73.9739144!2d40.7626931!2m3!6e0!7e2!8j1778576400!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"10:00am",n:"Breakfast — Blue Box Café at Tiffany's 💎",s:"confirmed",dir:null,c:"Confirmed via email",w:null,tip:"$68 USD full tasting · Holly's Favourites $35 USD · Allow 2 hrs."},
+  {t:"12:00pm",n:"Leave Tiffany's — subway to The MET",s:null,
+   dir:{label:"Subway 17 min → Metropolitan Museum of Art",url:"https://www.google.com/maps/dir/Blue+Box+Caf%C3%A9+by+Daniel+Boulud,+6th+Floor,+727+5th+Ave,+New+York,+NY+10022,+United+States/The+Metropolitan+Museum+of+Art,+1000+5th+Ave,+New+York,+NY+10028,+United+States/@40.770767,-73.9788774,15z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258fa8ac2cd01:0x4957c73b92e8f23d!2m2!1d-73.9739144!2d40.7626931!1m5!1m1!1s0x89c25896f660c26f:0x3b2fa4f4b6c6a1fa!2m2!1d-73.963244!2d40.7794366!2m3!6e0!7e2!8j1778576400!3e2",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"12:30pm",n:"The Metropolitan Museum of Art (~2 hrs)",s:"tobook",dir:null,c:null,w:"Cannot book MET until Kelly Clarkson tickets confirmed. Book at metmuseum.org · $30 USD · Closed Wednesdays.",tip:"Christine & Angi may prefer Hop-On Hop-Off — group can split. Closes 5pm."},
+  {t:"~2:30pm",n:"Kelly Clarkson / Tonight Show — standby",s:"tobook",
+   dir:{label:"Subway → 30 Rockefeller Plaza for Kelly / Tonight Show",url:"https://www.google.com/maps/dir/The+Metropolitan+Museum+of+Art,+1000+5th+Ave/30+Rockefeller+Plaza,+New+York,+NY+10112/@40.7671,-73.9698,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c25896f660c26f:0x3b2fa4f4b6c6a1fa!2m2!1d-73.963244!2d40.7794366!1m5!1m1!1s0x89c258fee98bc0a1:0x43d1bf6e8c5d30e9!2m2!1d-73.9787!2d40.7587!3e3",mode:"subway"},
+   c:null,w:"Awaiting email confirmation for Kelly Clarkson. Book via 1iota.com. Tonight Show standby also at 30 Rock.",tip:"Kelly Clarkson: allow 15 min travel from MET. Tonight Show taping begins 3:45pm."},
+  {t:"7:00pm",n:"Dinner — LOS TACOS No.1 🌮",s:null,dir:null,c:null,w:null,tip:"Take away food — iconic NYC taco spot."},
+]},
+{num:9,lbl:"Wednesday 13th May",ttl:"Guggenheim · Moulin Rouge · FRIENDS™",wth:"21°C · Warm spring day · cardigan for air-conditioned theatres",tn:"Group splits! Christine & Angi → Empire State Building (7 min train). Others → Guggenheim (27 min subway). Both groups converge for lunch near Guggenheim.",acts:[
+  {t:"9:45am",n:"Leave hotel (bring glasses)",s:null,
+   dir:{label:"Subway 27 min → Guggenheim Museum",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Solomon+R.+Guggenheim+Museum,+1071+5th+Ave,+New+York,+NY+10128,+United+States/@40.7729502,-73.9765182,15z/data=!3m1!4b1!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258a29a5e9e99:0x4a01c8df6fb3cb8!2m2!1d-73.9589706!2d40.7829796!2m3!6e0!7e2!8j1778662800!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"9:10am",n:"Christine & Angi — Empire State Building",s:null,dir:null,c:null,w:null,tip:"7 min train · Observation deck opens 10:30am — grab coffee nearby first."},
+  {t:"10:30am",n:"Solomon R. Guggenheim Museum (~2 hrs)",s:"confirmed",dir:null,c:"Erica · 4 tix in Apple Wallet · $30 USD",w:null,tip:"Closes 5:30pm · Wednesdays until 9pm."},
+  {t:"~12:00pm",n:"Lunch — something close to Guggenheim",s:null,dir:null,c:null,w:null,tip:"Apollo Bagels is too far — find something in the neighbourhood."},
+  {t:"2:00pm",n:"MOULIN ROUGE — Broadway 🎭",s:"confirmed",dir:null,c:"206766064-8075631 (tix via email to Erica after 2pm Tue 12th May)",w:null,tip:"Christine, Angelina, Erica & Alyssa · 2 hrs 35 min."},
+  {t:"3:00pm",n:"FRIENDS™ Experience — Monica & Lauren 📺",s:"confirmed",dir:null,c:"5RZB7FB207082299 · Apple Wallet",w:null,tip:"~1 hour."},
+  {t:"5:00pm",n:"All meet back at hotel",s:null,dir:null,c:null,w:null,tip:null},
+  {t:"5:30pm",n:"Dinner — Ellen's Stardust Diner 🎤",s:null,
+   dir:{label:"Walk 6 min → Ellen's Stardust Diner, 1650 Broadway",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/Ellen's+Stardust+Diner,+1650+Broadway,+New+York,+NY+10019/@40.7624,-73.9853,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585b5b5b5b5b:0x5b5b5b5b5b5b5b5b!2m2!1d-73.9853!2d40.7624!3e2",mode:"walk"},
+   c:null,w:"Can't book — walk-in only. Expect big queues!",tip:"1950s diner with Broadway waitstaff ('Stardusters') who sing show tunes while you eat. Karaoke anyone? 🎵"},
+]},
+{num:10,lbl:"Thursday 14th May",ttl:"Central Park Zoo · 4 Charles Prime Rib",wth:"22°C · Warm & sunny · perfect for the zoo",tn:null,acts:[
+  {t:"9:30am",n:"Leave hotel",s:null,
+   dir:{label:"Walk 15 min → Central Park Zoo, 64th St & 5th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Central+Park+Zoo,+New+York,+NY+10021,+United+States/@40.7661211,-73.9790456,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258f1fcd66869:0x65d72e84d91a3f14!2m2!1d-73.9719906!2d40.7677061!2m3!6e0!7e2!8j1778576400!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"10:00am",n:"Central Park Zoo (~1.5 hrs) 🦁",s:"confirmed",dir:null,c:"Erica · 4 tix in Apple Wallet · $22.95 USD",w:"Must arrive between 10am & 11am.",tip:"Open 10am–5pm."},
+  {t:"~11:30am",n:"Attempt standby — Tonight Show, 30 Rock",s:"tobook",
+   dir:{label:"Subway 15 min → 30 Rockefeller Plaza",url:"https://www.google.com/maps/dir/Central+Park+Zoo,+New+York/30+Rockefeller+Plaza,+New+York,+NY+10112/@40.7641,-73.9752,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f1fcd66869:0x65d72e84d91a3f14!2m2!1d-73.9719906!2d40.7677061!1m5!1m1!1s0x89c258fee98bc0a1:0x43d1bf6e8c5d30e9!2m2!1d-73.9787!2d40.7587!3e3",mode:"subway"},
+   c:null,w:"Standby tickets — taping begins 3:45pm, finishes ~6:30pm. Book at 1iota.com.",tip:null},
+  {t:"Lunch",n:"Lunch suggestion — Red Hook Lobster",s:null,dir:null,c:null,w:null,tip:null},
+  {t:"8:00pm",n:"🥩 Dinner — Au Cheval, West Village",s:"confirmed",
+   dir:{label:"Subway 18 min → Au Cheval from 30 Rockefeller",url:"https://www.google.com/maps/dir/30+Rockefeller+Plaza,+New+York,+NY/Au+Cheval,+New+York,+NY/@40.7546,-73.9934,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258fee98bc0a1:0x43d1bf6e8c5d30e9!2m2!1d-73.9787!2d40.7587!1m5!1m1!1s0x89c2599636a7c4c3:0x2a9f3dc3df48e0c1!2m2!1d-74.0001!2d40.7318!3e3",mode:"subway"},
+   c:"Confirmed",w:null,tip:"TikTok the burger 😍"},
+]},
+{num:11,lbl:"Friday 15th May",ttl:"Coney Island · The Edge · Golden Diner",wth:"22°C · Warm beach day · sunscreen, breezy on boardwalk",tn:null,acts:[
+  {t:"8:00am",n:"Leave hotel",s:null,dir:null,c:null,w:null,tip:null},
+  {t:"~10:00am",n:"Coney Island — walk the boardwalk",s:null,
+   dir:{label:"Subway ~55 min → Coney Island (D, F or N train)",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Coney+Island,+Brooklyn,+NY+11224/@40.6284,-73.9596,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2444cb74c6ecf:0x6c7e9e1a4a5a9b8!2m2!1d-73.9819!2d40.5755!3e3",mode:"subway"},
+   c:null,w:null,tip:"Catch the D, F, or N train toward Coney Island."},
+  {t:"10:00am",n:"Luna Park ($42 USD · open 10am–2pm)",s:null,dir:null,c:null,w:null,tip:"Tickets not needed if skipping rides — public area. Must-do: Nathan's Famous hot dog! 🌭"},
+  {t:"~2:30pm",n:"Head back toward Manhattan",s:null,
+   dir:{label:"Subway ~55 min → back to Manhattan",url:"https://www.google.com/maps/dir/Coney+Island,+Brooklyn,+NY/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/@40.6917,-73.9697,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c2444cb74c6ecf:0x6c7e9e1a4a5a9b8!2m2!1d-73.9819!2d40.5755!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"6:10pm",n:"🌇 The Edge — Hudson Yards observation deck",s:"confirmed",
+   dir:{label:"Subway → The Edge, 30 Hudson Yards",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/The+Edge,+30+Hudson+Yards,+New+York,+NY+10001/@40.7534,-74.0034,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c259b4e4e4e4e4:0xe4e4e4e4e4e4e4e4!2m2!1d-74.0019!2d40.7533!3e3",mode:"subway"},
+   c:"SRN7Y0M3",w:null,tip:"Outdoor observation deck jutting out over the Hudson — NYC's highest outdoor sky deck. Worth every second at sunset! 🌅"},
+  {t:"~8:00pm",n:"35 min train to Golden Diner",s:null,
+   dir:{label:"Subway 35 min → Golden Diner, Lower East Side",url:"https://www.google.com/maps/dir/The+Edge,+30+Hudson+Yards,+New+York/Golden+Diner,+123+Madison+St,+New+York,+NY+10002/@40.7262,-73.9941,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c259b4e4e4e4e4:0xe4e4e4e4e4e4e4e4!2m2!1d-74.0019!2d40.7533!1m5!1m1!1s0x89c2599d0d0d0d0d:0x0d0d0d0d0d0d0d0d!2m2!1d-73.9874!2d40.7136!3e3",mode:"subway"},
+   c:null,w:null,tip:null},
+  {t:"9:00pm",n:"🥞 Golden Diner — best pancakes in NYC",s:"confirmed",
+   dir:null,c:null,w:null,tip:"Worth the trip! A late-night NYC institution on the Lower East Side."},
+]},
+{num:12,lbl:"Saturday 16th May",ttl:"Free Day · Clipper City Jazz Sail 🚢",wth:"23°C · Beautiful day · temps drop to ~10°C on the water at night",tn:null,acts:[
+  {t:"10:00am",n:"Louis Vuitton Chocolate Shop — 4th Floor, 57th St",s:"confirmed",
+   dir:{label:"Walk → Louis Vuitton, 1 E 57th St",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Louis+Vuitton,+1+E+57th+St,+New+York,+NY+10022/@40.7644,-73.9791,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258f9a9a9a9a9:0xa9a9a9a9a9a9a9a9!2m2!1d-73.9749!2d40.7632!3e2",mode:"walk"},
+   c:"Erica: 3MCMY96F4BHA · Monica: 3MCN4N43CK2U · Christine: 3MCN7M4ATU7G",w:null,tip:"Le Chocolat Maxime Frédéric — 4th floor. Chocolate & Hazelnut Spread $48/330g."},
+  {t:"Morning",n:"Free day — rest, explore, shop",s:null,dir:null,c:null,w:null,tip:"Suggestions: TimeOut Market near DUMBO · All Seasons Body Work (open 10:30am–11pm)."},
+  {t:"6:30pm",n:"Leave hotel for Pier 17",s:null,
+   dir:{label:"Subway → Clipper City Tall Ship, 89 South St Pier 17",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Clipper+City+Tall+Ship+-+Operated+by+Manhattan+By+Sail,+89+South+St+Pier+17,+New+York,+NY+10038,+United+States/@40.7349115,-74.0369303,13z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c25a3c62f25ad7:0xb8fef5ce19a1ec09!2m2!1d-74.001094!2d40.7051737!2m3!6e0!7e2!8j1778964300!3e3",mode:"subway"},
+   c:null,w:"Allow extra time — Pier 17 area can be tricky to navigate. Leave by 6:30pm.",tip:null},
+  {t:"7:15pm",n:"Check in at Pier 17, 89 South St",s:"confirmed",dir:null,c:null,w:null,tip:"Boarding begins 15 min prior to departure."},
+  {t:"7:30pm",n:"🚢 Clipper City Tall Ship — Sunset Jazz Sail",s:"confirmed",dir:null,c:"334966875 (Erica · 6 tix in Apple Wallet)",w:"Temperatures drop to ~10°C on the water — BRING A JACKET!",tip:"Duration: 7:30pm–9:15pm · Manhattan by Sail."},
+]},
+{num:13,lbl:"Sunday 17th May — Departure Day 🏠",ttl:"Farewell Brunch · JFK · Home",wth:"23°C · Warm farewell · one last stroll through Times Square",tn:null,acts:[
+  {t:"Morning",n:"Pack bags — late checkout 2:00pm confirmed",s:"confirmed",dir:null,c:null,w:null,tip:"Monica arranged 2pm late checkout."},
+  {t:"~10:50am",n:"Walk to Lillie's Victorian Establishment",s:null,
+   dir:{label:"Walk 10 min → Lillie's Victorian Establishment",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Lillie's+Victorian+Establishment,+249+W+49th+St,+New+York,+NY+10019/@40.761,-73.9862,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585d5d5d5d5d:0x5d5d5d5d5d5d5d5d!2m2!1d-73.9862!2d40.7608!3e2",mode:"walk"},
+   c:null,w:null,tip:null},
+  {t:"11:00am",n:"Farewell Brunch — Lillie's Victorian Establishment 🥂",s:"confirmed",dir:null,c:null,w:null,tip:"Allow ~1.5 hrs · Walk through Times Square one last time on the way back."},
+  {t:"2:00pm",n:"Check out of Park Central Hotel",s:"confirmed",dir:null,c:null,w:null,tip:null},
+  {t:"2:20pm",n:"GO Airlink pickup from hotel",s:"confirmed",dir:null,c:"GO Airlink #835619 · goairlinkshuttle.com",w:null,tip:"Arrive JFK ~3:20pm. Allow 4 hours at airport for international departure."},
+  {t:"7:20pm",n:"Depart New York — Qantas QF4 ✈️",s:"confirmed",dir:null,c:null,w:null,tip:null},
+  {t:"8:20am",n:"Arrive Sydney — Tuesday 19th May 🏠",s:"confirmed",dir:null,c:null,w:null,tip:"First Choice Shuttle home — BOOKED · $130 cash on the day."},
+]},
+];
+
+function badge(s){
+  if(s==='confirmed') return '<span class="abadge bc">✓ Confirmed</span>';
+  if(s==='tobook') return '<span class="abadge bb">To Book</span>';
+  if(s==='optional') return '<span class="abadge bo">Optional</span>';
+  return '';
+}
+function dotCls(s){
+  if(s==='confirmed') return 'dc';
+  if(s==='tobook') return 'dt';
+  if(s==='optional') return 'do';
+  return '';
+}
+function modeIcon(m){
+  if(m==='subway') return '🚇';
+  if(m==='uber') return '🚕';
+  return '🚶';
+}
+function togglePanel(id){document.getElementById(id).classList.toggle('open')}
+
+const dc=document.getElementById('dc');
+days.forEach((day,di)=>{
+  const counts={};
+  day.acts.forEach(a=>{if(a.s)counts[a.s]=(counts[a.s]||0)+1});
+  let dotsHtml='';
+  ['confirmed','tobook','optional'].forEach(s=>{
+    if(counts[s]) for(let i=0;i<Math.min(counts[s],4);i++) dotsHtml+=`<div class="dot ${dotCls(s)}"></div>`;
+  });
+
+  let tlHtml='';
+  day.acts.forEach((act,ai)=>{
+    const hasD=act.c||act.w||act.tip;
+    let det='';
+    if(act.c) det+=`<div class="dctag">📋 ${act.c}</div>`;
+    if(act.w) det+=`<div class="dwarn">⚠️ ${act.w}</div>`;
+    if(act.tip) det+=`<div class="dtip">💡 ${act.tip}</div>`;
+
+    const dirHtml=act.dir?`<a class="dir-link" href="${act.dir.url}" target="_blank" rel="noopener"><span class="dir-icon">${modeIcon(act.dir.mode)}</span><span class="dir-text">${act.dir.label}</span><span class="dir-arrow">↗</span></a>`:'';
+
+    tlHtml+=`
+      <div class="tli">
+        <div class="tlt">${act.t}</div>
+        <div class="tld"><div class="tldot ${act.s?dotCls(act.s):''}"></div></div>
+        <div class="tlcw">
+          ${dirHtml}
+          <div class="ac${hasD?' hd':''}${act.s===' '?' exp':''}" ${hasD?`onclick="toggleAct(this,'d${di}-${ai}')"`:''}>
+            <div class="at">
+              <div class="an">${act.n}</div>
+              ${badge(act.s)}
+            </div>
+            ${hasD?`<div class="xhint"><span class="xhint-c">▾</span><span>tap for details</span></div>`:''}
+            ${hasD?`<div class="adet" id="d${di}-${ai}">${det}</div>`:''}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  const tnHtml=day.tn?`<div class="tnote"><span>⏱</span><span>${day.tn}</span></div>`:'';
+
+  dc.insertAdjacentHTML('beforeend',`
+    <div class="dcard" id="day${di}" style="animation-delay:${di*.03}s">
+      <div class="dhdr" onclick="toggleDay(${di})">
+        <div class="dnum-wrap"><div class="dnum">${day.num}</div></div>
+        <div class="dhdr-txt">
+          <div class="dlbl">${day.lbl}</div>
+          <div class="dttl">${day.ttl}</div>
+          <div class="dwth">🌤 ${day.wth}</div>
+        </div>
+        <div class="dhdr-r">
+          <div class="sdots">${dotsHtml}</div>
+          <div class="dchev">▾</div>
+        </div>
+      </div>
+      <div class="dbody">
+        ${tnHtml}
+        <div class="tl">${tlHtml}</div>
+      </div>
+    </div>`);
+});
+
+function toggleDay(di){
+  const card=document.getElementById('day'+di);
+  card.classList.toggle('open');
+  if(card.classList.contains('open')) setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+function toggleAct(el,id){
+  el.classList.toggle('exp');
+  const d=document.getElementById(id);
+  if(d) d.classList.toggle('show');
+}
+</script>
+</body>
+</html>
