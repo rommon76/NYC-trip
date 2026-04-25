@@ -106,10 +106,19 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',-apple-syste
 .dir-text{flex:1}
 .dir-arrow{font-size:.7rem;opacity:.5;flex-shrink:0}
 
-.ac{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ac{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden;position:relative;transition:opacity .25s ease,background .25s ease}
 .ac.hd{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .ac.hd:active{opacity:.85}
 .ac.exp{border-color:#6B35C4}
+.ac.act-done{background:var(--done-bg);border-color:var(--done-border)}
+.ac.act-done .an{color:var(--done-fg);text-decoration:line-through;text-decoration-color:rgba(122,143,130,.5);text-decoration-thickness:1px}
+.ac.act-done:not(.exp){opacity:.65}
+.tli.act-done .tldot{background:var(--sage);border-color:var(--sage)}
+.tli.act-done .tlt{color:var(--done-fg);opacity:.7}
+.act-toggle{position:absolute;top:.55rem;right:.55rem;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--white);color:var(--slate);font-size:.7rem;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .15s,border-color .15s,color .15s;z-index:2}
+.act-toggle:active{transform:scale(.92)}
+.ac.act-done .act-toggle{background:var(--sage);border-color:var(--sage);color:#fff}
+.at{padding-right:2.5rem !important}
 .at{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;padding:.7rem .85rem}
 .an{font-size:.83rem;font-weight:500;color:var(--ink);line-height:1.4;flex:1;min-width:0}
 .abadge{flex-shrink:0;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;padding:.2rem .45rem;border-radius:4px;margin-top:.1rem;white-space:nowrap}
@@ -532,54 +541,130 @@ const days=[
 ];
 
 // ============== COMPLETION STATE ==============
-const STORAGE_KEY='nyc2026_completed_v1';
+const STORAGE_KEY='nyc2026_completed_v2';
+const LEGACY_KEY='nyc2026_completed_v1';
 
 function loadCompleted(){
   try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(!raw) return {manual:{},dismissed:{}};
+    let raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      // migrate from v1 if present
+      const legacy=localStorage.getItem(LEGACY_KEY);
+      if(legacy){
+        const old=JSON.parse(legacy);
+        return {dayManual:old.manual||{},actManual:{}};
+      }
+      return {dayManual:{},actManual:{}};
+    }
     const p=JSON.parse(raw);
-    return {manual:p.manual||{},dismissed:p.dismissed||{}};
-  }catch(e){return {manual:{},dismissed:{}}}
+    return {dayManual:p.dayManual||{},actManual:p.actManual||{}};
+  }catch(e){return {dayManual:{},actManual:{}}}
 }
-function saveCompleted(state){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}
+function saveCompleted(s){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch(e){}
 }
 
-// Today in NYC local date — auto-completion fires when NYC has rolled past the day.
-// Using en-CA locale gives YYYY-MM-DD format.
+// Today (and now) in NYC local time
 function todayNYC(){
   try{
     return new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-  }catch(e){
-    return new Date().toISOString().slice(0,10);
+  }catch(e){return new Date().toISOString().slice(0,10);}
+}
+// Returns [hour, minute] in NYC, 0-23 / 0-59
+function nowNYCMinutes(){
+  try{
+    const fmt=new Intl.DateTimeFormat('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false});
+    const parts=fmt.formatToParts(new Date());
+    const h=parseInt(parts.find(p=>p.type==='hour').value,10);
+    const m=parseInt(parts.find(p=>p.type==='minute').value,10);
+    return h*60+m;
+  }catch(e){const d=new Date();return d.getHours()*60+d.getMinutes();}
+}
+
+// Parse an activity time string like "5:30am", "~5:30pm", "12:35pm", "9:00pm" → minutes since midnight.
+// Returns null if it can't be parsed (e.g. "Morning", "After", "Return", "Lunch").
+function parseTimeToMinutes(t){
+  if(!t) return null;
+  const cleaned=t.replace(/^~/,'').trim().toLowerCase();
+  const m=cleaned.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/);
+  if(!m) return null;
+  let h=parseInt(m[1],10);
+  const min=m[2]?parseInt(m[2],10):0;
+  const ampm=m[3];
+  if(ampm==='am'){if(h===12)h=0;}
+  else{if(h!==12)h+=12;}
+  return h*60+min;
+}
+
+// For each activity index in a day, compute the "effective end time" — the minute past which
+// it should auto-complete. For activities with parseable times, this is their own time.
+// For unparseable ones ("Morning", "After"), we use the next parseable activity's time
+// (so they stay "in progress" until the next concrete time passes). If there's no later
+// parseable time, we use end of day (23:59).
+function buildDayTimeMap(day){
+  const times=day.acts.map(a=>parseTimeToMinutes(a.t));
+  const out=times.slice();
+  for(let i=times.length-1,nextT=24*60;i>=0;i--){
+    if(times[i]!==null){nextT=times[i];out[i]=times[i];}
+    else out[i]=nextT;
   }
+  return out;
 }
 
 let state=loadCompleted();
+const TIME_MAPS={};
+days.forEach(d=>{TIME_MAPS[d.num]=buildDayTimeMap(d);});
 
-function isComplete(day){
-  // manual override wins both ways
-  if(state.manual[day.num]==='complete') return true;
-  if(state.manual[day.num]==='incomplete') return false;
-  // auto: complete if NYC date has passed this day's date
+function actKey(dayNum,actIdx){return dayNum+':'+actIdx;}
+
+function isActAutoComplete(day,actIdx){
   if(!day.date) return false;
-  return todayNYC() > day.date;
+  const today=todayNYC();
+  if(today < day.date) return false;          // day not started
+  if(today > day.date) return true;           // day has passed
+  // same day: compare current minutes to activity's effective end time
+  const t=TIME_MAPS[day.num][actIdx];
+  return nowNYCMinutes() >= t;
 }
-
-function toggleComplete(dayNum){
+function isActComplete(day,actIdx){
+  const k=actKey(day.num,actIdx);
+  if(state.actManual[k]==='complete') return true;
+  if(state.actManual[k]==='incomplete') return false;
+  return isActAutoComplete(day,actIdx);
+}
+function toggleAct(dayNum,actIdx){
   const day=days.find(d=>d.num===dayNum);
   if(!day) return;
-  const currentlyComplete=isComplete(day);
-  // Set explicit override opposite to current state
-  state.manual[dayNum]=currentlyComplete?'incomplete':'complete';
+  const k=actKey(dayNum,actIdx);
+  const currently=isActComplete(day,actIdx);
+  state.actManual[k]=currently?'incomplete':'complete';
+  saveCompleted(state);
+  renderDays();
+}
+
+function isDayComplete(day){
+  // Manual day override wins
+  if(state.dayManual[day.num]==='complete') return true;
+  if(state.dayManual[day.num]==='incomplete') return false;
+  // Auto: complete if NYC date has rolled past this day's date
+  if(day.date && todayNYC() > day.date) return true;
+  // Auto: complete if EVERY activity in the day is complete
+  if(day.acts.length && day.acts.every((_,i)=>isActComplete(day,i))) return true;
+  return false;
+}
+
+function toggleDayComplete(dayNum){
+  const day=days.find(d=>d.num===dayNum);
+  if(!day) return;
+  const currently=isDayComplete(day);
+  state.dayManual[dayNum]=currently?'incomplete':'complete';
   saveCompleted(state);
   renderDays();
 }
 
 function resetCompletion(){
-  if(!confirm('Reset all completion marks? Days will revert to auto-completion based on today\'s date.')) return;
-  state={manual:{},dismissed:{}};
+  if(!confirm('Reset all completion marks? Days and activities will revert to auto-completion based on the current date and time.')) return;
+  state={dayManual:{},actManual:{}};
   saveCompleted(state);
   renderDays();
 }
@@ -612,8 +697,13 @@ function buildDayCard(day,di,completed){
     if(counts[s]) for(let i=0;i<Math.min(counts[s],4);i++) dotsHtml+=`<div class="dot ${dotCls(s)}"></div>`;
   });
 
+  // Build activity entries with completion state, then sort: incomplete keep original order, complete drop to bottom in original order.
+  const indexed=day.acts.map((act,origIdx)=>({act,origIdx,done:isActComplete(day,origIdx)}));
+  const ordered=[...indexed.filter(x=>!x.done),...indexed.filter(x=>x.done)];
+
   let tlHtml='';
-  day.acts.forEach((act,ai)=>{
+  ordered.forEach(({act,origIdx,done})=>{
+    const ai=origIdx;
     const hasD=act.c||act.w||act.tip;
     let det='';
     if(act.c) det+=`<div class="dctag">📋 ${act.c}</div>`;
@@ -622,12 +712,15 @@ function buildDayCard(day,di,completed){
 
     const dirHtml=act.dir?`<a class="dir-link" href="${act.dir.url}" target="_blank" rel="noopener"><span class="dir-icon">${modeIcon(act.dir.mode)}</span><span class="dir-text">${act.dir.label}</span><span class="dir-arrow">↗</span></a>`:'';
 
+    const toggleBtn=`<button class="act-toggle" aria-label="${done?'Mark incomplete':'Mark complete'}" onclick="event.stopPropagation();toggleAct(${day.num},${ai})">${done?'✓':''}</button>`;
+
     tlHtml+=`
-      <div class="tli">
+      <div class="tli${done?' act-done':''}">
         <div class="tlt">${act.t}</div>
-        <div class="tld"><div class="tldot ${act.s?dotCls(act.s):''}"></div></div>
+        <div class="tld"><div class="tldot ${done?'dc':(act.s?dotCls(act.s):'')}"></div></div>
         <div class="tlcw">
-          <div class="ac${hasD?' hd':''}" ${hasD?`onclick="toggleAct(this,'d${day.num}-${ai}')"`:''}>
+          <div class="ac${hasD?' hd':''}${done?' act-done':''}" ${hasD?`onclick="toggleActDetails(this,'d${day.num}-${ai}')"`:''}>
+            ${toggleBtn}
             <div class="at">
               <div class="an">${act.n}</div>
               ${badge(act.s)}
@@ -644,7 +737,7 @@ function buildDayCard(day,di,completed){
 
   const toggleBtnHtml=`
     <div class="complete-toggle-wrap">
-      <button class="complete-toggle${completed?' is-complete':''}" onclick="event.stopPropagation();toggleComplete(${day.num})">
+      <button class="complete-toggle${completed?' is-complete':''}" onclick="event.stopPropagation();toggleDayComplete(${day.num})">
         ${completed?'✓ Completed — tap to undo':'Mark day as complete'}
       </button>
     </div>`;
@@ -679,7 +772,7 @@ function renderDays(){
   const incomplete=[];
   const completed=[];
   days.forEach(d=>{
-    if(isComplete(d)) completed.push(d); else incomplete.push(d);
+    if(isDayComplete(d)) completed.push(d); else incomplete.push(d);
   });
   // Incomplete first, sorted by day number ascending (so "today" / next up is at top)
   incomplete.sort((a,b)=>a.num-b.num);
@@ -700,7 +793,7 @@ function toggleDay(dayNum){
   card.classList.toggle('open');
   if(card.classList.contains('open')) setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),50);
 }
-function toggleAct(el,id){
+function toggleActDetails(el,id){
   el.classList.toggle('exp');
   const d=document.getElementById(id);
   if(d) d.classList.toggle('show');
