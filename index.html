@@ -95,7 +95,7 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',-apple-syste
 .tli::before{content:'';position:absolute;left:4.2rem;top:0;bottom:0;width:1px;background:var(--border)}
 .tli:first-child::before{top:1.1rem}
 .tli:last-child::before{bottom:calc(100% - 1.1rem)}
-.tlt{flex-shrink:0;width:4rem;text-align:right;font-size:.63rem;font-weight:500;color:var(--slate);padding:1rem .6rem 1rem .75rem;line-height:1.3}
+.tlt{flex-shrink:0;width:4.4rem;text-align:right;font-size:.63rem;font-weight:500;color:var(--slate);padding:1rem .6rem 1rem .55rem;line-height:1.3}
 .tld{flex-shrink:0;width:.85rem;display:flex;flex-direction:column;align-items:center;padding-top:1.05rem;position:relative;z-index:1}
 .tldot{width:8px;height:8px;border-radius:50%;background:var(--cream);border:1.5px solid var(--border);flex-shrink:0}
 .tlcw{flex:1;min-width:0;padding:.6rem .85rem .6rem .6rem}
@@ -137,6 +137,21 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',-apple-syste
 .li{display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--slate)}
 .ldot{width:8px;height:8px;border-radius:50%}
 .lhint{font-size:.62rem;color:var(--slate);margin-left:auto}
+/* Live weather styling */
+.dwth.live{color:#0E7B95;font-weight:500}
+.dwth.live::before{content:'● ';color:#10A9CC;font-size:.55rem;vertical-align:middle}
+.dwth.loading{opacity:.55;font-style:italic}
+.tlt-wx{display:block;font-size:.6rem;color:#0E7B95;margin-top:.15rem;font-weight:500;letter-spacing:0;text-transform:none}
+.tli.act-done .tlt-wx{color:var(--done-fg);opacity:.6}
+.wx-status{display:flex;align-items:center;gap:.5rem;padding:.55rem .85rem;border-radius:7px;margin-bottom:.75rem;font-size:.7rem;line-height:1.4}
+.wx-status.loading{background:rgba(16,169,204,.08);color:#0E7B95;border:1px solid rgba(16,169,204,.2)}
+.wx-status.ready{background:rgba(16,169,204,.08);color:#0E7B95;border:1px solid rgba(16,169,204,.2)}
+.wx-status.error{background:#FFF4E5;color:#8A4A0E;border:1px solid #F4D2A8}
+.wx-status .wx-msg{flex:1}
+.wx-status .wx-retry{background:transparent;border:1px solid currentColor;color:inherit;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .65rem;border-radius:5px;cursor:pointer;font-family:inherit;font-weight:500;-webkit-tap-highlight-color:transparent}
+.wx-status .wx-retry:active{opacity:.7}
+.wx-spinner{display:inline-block;width:10px;height:10px;border:1.5px solid rgba(14,123,149,.3);border-top-color:#10A9CC;border-radius:50%;animation:wxspin .8s linear infinite;flex-shrink:0}
+@keyframes wxspin{to{transform:rotate(360deg)}}
 .ftr{background:#2C4A38;color:rgba(234,245,238,.45);text-align:center;padding:2rem 1.25rem calc(env(safe-area-inset-bottom,0) + 2rem);font-size:.72rem;letter-spacing:.06em;line-height:1.7}
 .ftr strong{display:block;font-family:'Playfair Display',Georgia,serif;font-style:italic;color:#9BE0B4;font-size:1rem;margin-bottom:.3rem}
 @media(max-width:380px){.kgrid{grid-template-columns:1fr}.ki{border-right:none!important}.ki:nth-last-child(-n+2){border-bottom:1px solid var(--border)}.ki:last-child{border-bottom:none}}
@@ -159,7 +174,7 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',-apple-syste
     <div class="li"><div class="ldot dc"></div>Confirmed</div>
     <div class="li"><div class="ldot dt"></div>To book</div>
     <div class="li"><div class="ldot do"></div>Optional</div>
-    <div class="lhint">🗺 Green buttons = tap for directions</div>
+    <div class="lhint">🟢 Teal = live forecast</div>
   </div>
 
   <div class="panel" id="p-details">
@@ -236,7 +251,7 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',-apple-syste
 // mode icons: walk=🚶, subway=🚇, uber=🚕
 // date: YYYY-MM-DD (NYC local) — used for auto-completion vs Sydney "today"
 const days=[
-{num:0,date:"2026-05-04",lbl:"Monday 4th May",ttl:"Travel Day ✈️",wth:"17°C · Mild & partly cloudy · light jacket",tn:null,acts:[
+{num:0,date:"2026-05-04",lbl:"Monday 4th May",ttl:"Travel Day ✈️",wth:"18°C / 12°C · Partial sunshine · light jacket",tn:null,acts:[
   {t:"5:30am",n:"Depart home — First Choice Shuttle ($100 cash)",s:"confirmed",dir:null,c:null,w:null,tip:"Allow plenty of time for international check-in & bag drop at Sydney Airport."},
   {t:"9:10am",n:"Depart Sydney — Qantas QF3",s:"confirmed",dir:null,c:"QF3",w:null,tip:"3-hour flight to Auckland. Auckland is 2 hours ahead of Sydney."},
   {t:"2:10pm",n:"Arrive Auckland (NZ) — MUST DISEMBARK for layover",s:"confirmed",dir:null,c:null,w:null,tip:"Layover: 2 hours 15 minutes. You must leave the aircraft."},
@@ -246,7 +261,7 @@ const days=[
   {t:"~5:30pm",n:"Contact GO Airlink driver on exit",s:"confirmed",dir:null,c:"GO Airlink #835618 · goairlinkshuttle.com",w:null,tip:"ARRIVAL PROCEDURES: You will receive a text message upon arrival. Click the link in the text to receive instructions on meeting your driver. After collecting your bags, proceed to the Welcome Center and press the Ready Now button to be connected with your vehicle. If you have issues, proceed to the Welcome Center in your arriving terminal and call extension #18 using one of the courtesy phones to connect directly with Go Airlink NYC."},
   {t:"~6:30pm",n:"Arrive Park Central Hotel — check in & freshen up",s:"confirmed",dir:null,c:null,w:null,tip:"Romina will likely already be there. Dinner at hotel or head out to explore Times Square."},
 ]},
-{num:1,date:"2026-05-05",lbl:"Tuesday 5th May",ttl:"Big Bus · Empire State · Skylark",wth:"17°C · Cool mornings, mild afternoons · jacket for evening",tn:null,acts:[
+{num:1,date:"2026-05-05",lbl:"Tuesday 5th May",ttl:"Big Bus · Empire State · Skylark",wth:"21°C / 13°C · Partial sunshine · jacket for evening",tn:null,acts:[
   {t:"8:45am",n:"Leave Park Central Hotel",s:null,
    dir:{label:"Walk 8 min → M&M's World (Big Bus pickup)",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/M%26M's+World+New+York,+1600+Broadway,+New+York,+NY+10019/@40.7628,−73.9834,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585a3a28b5ef:0xad9c0c5e9dfe0a43!2m2!1d-73.9846839!2d40.7598754!3e2",mode:"walk"},
    c:null,w:null,tip:"Head south on 7th Ave, turn left on 52nd St, M&M's World is on Broadway. The Big Bus stop is right outside."},
@@ -291,7 +306,7 @@ const days=[
    dir:{label:"Walk 20 min back to hotel (or cab)",url:"https://www.google.com/maps/dir/The+Skylark,+200+W+39th+St,+New+York/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/@40.7567,-73.9847,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c25904ae6bd97b:0x1a0d5c8b4e4b6c7d!2m2!1d-73.9882!2d40.7551!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!3e2",mode:"walk"},
    c:null,w:"ALL PATRONS MUST BE 21+",tip:null},
 ]},
-{num:2,date:"2026-05-06",lbl:"Wednesday 6th May",ttl:"Woodbury Common · Broadway Night",wth:"18°C · Comfortable shopping · layers for theatre",tn:"Christine & Angelina arrive LGA at 7:36pm — they will not be joining the Broadway shows tonight but will meet the group back at the hotel after the shows end.",acts:[
+{num:2,date:"2026-05-06",lbl:"Wednesday 6th May",ttl:"Woodbury Common · Broadway Night",wth:"20°C / 13°C · ☔ Periods of rain · umbrella for theatre",tn:"Christine & Angelina arrive LGA at 7:36pm — they will not be joining the Broadway shows tonight but will meet the group back at the hotel after the shows end.",acts:[
   {t:"8:00am",n:"Leave Park Central Hotel",s:null,
    dir:{label:"Walk 10 min → Bus stop, 1651 Broadway at W 51st St",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/1651+Broadway,+New+York,+NY+10019/@40.7641,-73.9836,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585e0e0e0e0e:0x0e0e0e0e0e0e0e0e!2m2!1d-73.9836!2d40.7637!3e2",mode:"walk"},
    c:null,w:"Must arrive at stop by 8:15am — 15 min before departure.",tip:null},
@@ -312,7 +327,7 @@ const days=[
    c:null,w:null,tip:"Safe, well-lit, all-ages diner in the heart of Times Square. Hamilton group arrives first — grab a table and wait. Famous for cheesecake! 🍰 Beaches group will join from the Majestic (2 min walk)."},
   {t:"Evening",n:"Christine & Angelina arrive — welcome! 🎉",s:null,dir:null,c:null,w:null,tip:"They'll meet the group back at the hotel after the shows. Welcome Christine & Angelina!"},
 ]},
-{num:3,date:"2026-05-07",lbl:"Thursday 7th May",ttl:"Little Island · Yankees · Nobu",wth:"18°C · Good outdoor day · layer up for open-air stadium",tn:null,acts:[
+{num:3,date:"2026-05-07",lbl:"Thursday 7th May",ttl:"Little Island · Yankees · Nobu",wth:"21°C / 10°C · ☔ Rain in afternoon · poncho for Yankees!",tn:null,acts:[
   {t:"9:00am",n:"Leave hotel (bring glasses)",s:null,
    dir:{label:"Subway 26 min → Little Island, Pier 55",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Little+Island,+Pier+55,+Hudson+River+Park,+New+York,+NY+10014/@40.7488,-74.0085,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c259bc6c6c6c6c:0x6c6c6c6c6c6c6c6c!2m2!1d-74.0085!2d40.7327!3e3",mode:"subway"},
    c:null,w:null,tip:null},
@@ -330,7 +345,7 @@ const days=[
   {t:"6:15pm",n:"Dinner — Nobu, 40 W 57th St 🍱",s:"confirmed",dir:null,c:"2111674166",w:null,tip:"World-famous Japanese restaurant."},
   {t:"9:00pm",n:"Chris & Nick arrive — Flight AC720, LaGuardia",s:null,dir:null,c:null,w:null,tip:"Welcome Chris & Nick! 🎉"},
 ]},
-{num:4,date:"2026-05-08",lbl:"Friday 8th May",ttl:"Liberty Cruise · High Line · Summit",wth:"19°C · Warming up · breezy on the water, jacket for cruise",tn:"Must arrive Pier 83 by 9:45am — 45 min before the 10:30am boarding (ferry departs 11:15am). Liberty Cruise returns ~12:15pm — no Hudson Yards until 12:45pm at the earliest. ⚠️ NOTE: There is no return to the hotel today — you will be out all day and into the evening. Dress in layers and bring everything you need including a jacket for the Summit and comfortable shoes for lots of walking.",acts:[
+{num:4,date:"2026-05-08",lbl:"Friday 8th May",ttl:"Liberty Cruise · High Line · Summit",wth:"18°C / 10°C · Sunshine & few clouds · jacket for cruise & Summit",tn:"Must arrive Pier 83 by 9:45am — 45 min before the 10:30am boarding (ferry departs 11:15am). Liberty Cruise returns ~12:15pm — no Hudson Yards until 12:45pm at the earliest. ⚠️ NOTE: There is no return to the hotel today — you will be out all day and into the evening. Dress in layers and bring everything you need including a jacket for the Summit and comfortable shoes for lots of walking.",acts:[
   {t:"9:00am",n:"Leave hotel — head to Pier 83",s:null,
    dir:{label:"Subway 23 min → Pier 83, W 42nd St & 12th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Ellis+Island+Ferry+Building,+Ellis+Is,+Jersey+City,+NJ+07305,+United+States/@40.7335188,-74.0595989,13z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c251f60b1a6311:0x9424693561a0b446!2m2!1d-74.0418944!2d40.6996502!2m3!6e0!7e2!8j1778185800!3e3",mode:"subway"},
    c:null,w:null,tip:"3 min walk to subway, then 20 min ride. Grab breakfast near Pier 83 while waiting for boarding."},
@@ -370,7 +385,7 @@ const days=[
    dir:{label:"Walk 10 min → Park Central Hotel from Times Square",url:"https://www.google.com/maps/dir/Times+Square,+Manhattan,+NY+10036/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/@40.7613,-73.9847,16z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c25855c6480299:0x55194ec5a1ae072e!2m2!1d-73.9855426!2d40.7579747!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!3e2",mode:"walk"},
    c:null,w:null,tip:"10 min walk north on 7th Ave — you'll be home in no time."},
 ]},
-{num:5,date:"2026-05-09",lbl:"Saturday 9th May",ttl:"Central Park Bikes · Comedy Cellar",wth:"19°C · Pleasant biking weather · light layers",tn:null,acts:[
+{num:5,date:"2026-05-09",lbl:"Saturday 9th May",ttl:"Central Park Bikes · Comedy Cellar",wth:"18°C / 9°C · Increasing cloudiness · light layers for biking",tn:null,acts:[
   {t:"8:50am",n:"Leave hotel — walk to bike rental",s:null,
    dir:{label:"Walk → Bike Rental Central Park, 1391 6th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Bike+Rental+Central+Park,+1391+6th+Ave,+New+York,+NY+10019,+United+States/@40.76394,-73.9806987,18z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c259a68452b44f:0x4b14b2793295f99d!2m2!1d-73.9777297!2d40.7640059!2m3!6e0!7e2!8j1778258700!3e2",mode:"walk"},
    c:null,w:null,tip:null},
@@ -389,7 +404,7 @@ const days=[
    dir:{label:"Subway → Times Square from Comedy Cellar",url:"https://www.google.com/maps/dir/Comedy+Cellar,+117+MacDougal+St,+New+York,+NY+10012,+United+States/Times+Square,+Manhattan,+NY+10036,+United+States/@40.7440767,-74.0136229,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2599180d8339b:0xd2c25939c1d48c83!2m2!1d-74.0005639!2d40.7302002!1m5!1m1!1s0x89c25855c6480299:0x55194ec5a1ae072e!2m2!1d-73.9855426!2d40.7579747!2m3!6e0!7e2!8j1778258700!3e3",mode:"subway"},
    c:null,w:null,tip:null},
 ]},
-{num:6,date:"2026-05-10",lbl:"Sunday 10th May — Mother's Day 🌸",ttl:"Brooklyn Bridge · DUMBO · Horse Carriage",wth:"20°C · Lovely spring day · layers for the evening carriage ride",tn:null,acts:[
+{num:6,date:"2026-05-10",lbl:"Sunday 10th May — Mother's Day 🌸",ttl:"Brooklyn Bridge · DUMBO · Horse Carriage",wth:"18°C / 9°C · Some sun, then clouds · layers for evening carriage",tn:null,acts:[
   {t:"9:00am",n:"Leave hotel — optional Times Square Church stop",s:null,
    dir:{label:"Walk → Times Square Church (optional, 10 min)",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Times+Square+Church,+237+W+51st+St,+New+York,+NY+10019/@40.762,-73.9846,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585c4c4c4c4c:0x4c4c4c4c4c4c4c4c!2m2!1d-73.9877!2d40.7623!3e2",mode:"walk"},
    c:null,w:null,tip:"10-min pop-in to experience the choir — worth it on Mother's Day."},
@@ -421,7 +436,7 @@ const days=[
    dir:{label:"Walk 15 min → Park Central Hotel",url:"https://www.google.com/maps/dir/NYC+Horse+%26+Carriage+Ride+-+Official+Central+Park+Tours,+7th+Ave+%26+Central+Park+S,+W+59th+St,+New+York,+NY+10019,+United+States/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/@40.7657123,-73.9824254,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2592cb1e752ed:0x933fd6771ddb24cf!2m2!1d-73.9789637!2d40.7663039!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!2m3!6e0!7e2!8j1778446800!3e2",mode:"walk"},
    c:null,w:null,tip:null},
 ]},
-{num:7,date:"2026-05-11",lbl:"Monday 11th May",ttl:"Top of the Rock · Roosevelt Island · SoHo",wth:"20°C · Great views day · breezy on rooftop decks",tn:"Top of the Rock opens at 8:00am.",acts:[
+{num:7,date:"2026-05-11",lbl:"Monday 11th May",ttl:"Top of the Rock · Roosevelt Island · SoHo",wth:"18°C / 10°C · Mostly cloudy · breezy on rooftop decks",tn:"Top of the Rock opens at 8:00am.",acts:[
   {t:"7:45am",n:"Leave hotel",s:null,
    dir:{label:"Walk → Rockefeller Center, 45 Rockefeller Plaza",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Rockefeller+Center,+45+Rockefeller+Plaza,+New+York,+NY+10111,+United+States/@40.7616715,-73.9830575,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258fecf664df5:0x33d224a0d5dacca2!2m2!1d-73.9786736!2d40.7587402!2m3!6e0!7e2!8j1778446800!3e2",mode:"walk"},
    c:null,w:null,tip:null},
@@ -455,7 +470,7 @@ const days=[
    dir:{label:"Subway → Park Central Hotel from Little Italy",url:"https://www.google.com/maps/dir/Little+Italy,+New+York,+NY+10013,+USA/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/@40.7412571,-74.011616,14z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c2598845057def:0x9ecf1b969fbbb484!2m2!1d-73.9973273!2d40.7191413!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!2m3!6e0!7e2!8j1778533200!3e3",mode:"subway"},
    c:null,w:null,tip:null},
 ]},
-{num:8,date:"2026-05-12",lbl:"Tuesday 12th May",ttl:"Blue Box Café · The MET · Kelly Clarkson",wth:"21°C · Warm & comfortable · great day for walking",tn:null,acts:[
+{num:8,date:"2026-05-12",lbl:"Tuesday 12th May",ttl:"Blue Box Café · The MET · Kelly Clarkson",wth:"18°C / 11°C · ☔ Rain · umbrella & waterproof shoes",tn:null,acts:[
   {t:"9:40am",n:"Leave hotel",s:null,
    dir:{label:"Walk 5–7 min → Blue Box Café, Tiffany's, 727 5th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Blue+Box+Caf%C3%A9+by+Daniel+Boulud,+6th+Floor,+727+5th+Ave,+New+York,+NY+10022,+United+States/@40.7636246,-73.9800154,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258fa8ac2cd01:0x4957c73b92e8f23d!2m2!1d-73.9739144!2d40.7626931!2m3!6e0!7e2!8j1778576400!3e2",mode:"walk"},
    c:null,w:null,tip:null},
@@ -469,7 +484,7 @@ const days=[
    c:null,w:"Awaiting email confirmation for Kelly Clarkson. Book via 1iota.com. Tonight Show standby also at 30 Rock.",tip:"Kelly Clarkson: allow 15 min travel from MET. Tonight Show taping begins 3:45pm."},
   {t:"7:00pm",n:"Dinner — LOS TACOS No.1 🌮",s:null,dir:null,c:null,w:null,tip:"Take away food — iconic NYC taco spot."},
 ]},
-{num:9,date:"2026-05-13",lbl:"Wednesday 13th May",ttl:"Guggenheim · Moulin Rouge · FRIENDS™",wth:"21°C · Warm spring day · cardigan for air-conditioned theatres",tn:"Group heads to Guggenheim this morning (27 min subway from hotel). Both Moulin Rouge and FRIENDS™ Experience are in the afternoon — group splits at 2pm.",acts:[
+{num:9,date:"2026-05-13",lbl:"Wednesday 13th May",ttl:"Guggenheim · Moulin Rouge · FRIENDS™",wth:"18°C / 11°C · ☔ Rain · perfect indoor day for Guggenheim & shows",tn:"Group heads to Guggenheim this morning (27 min subway from hotel). Both Moulin Rouge and FRIENDS™ Experience are in the afternoon — group splits at 2pm.",acts:[
   {t:"9:45am",n:"Leave hotel (bring glasses)",s:null,
    dir:{label:"Subway 27 min → Guggenheim Museum",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Solomon+R.+Guggenheim+Museum,+1071+5th+Ave,+New+York,+NY+10128,+United+States/@40.7729502,-73.9765182,15z/data=!3m1!4b1!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258a29a5e9e99:0x4a01c8df6fb3cb8!2m2!1d-73.9589706!2d40.7829796!2m3!6e0!7e2!8j1778662800!3e3",mode:"subway"},
    c:null,w:null,tip:null},
@@ -482,7 +497,7 @@ const days=[
    dir:{label:"Walk 6 min → Ellen's Stardust Diner, 1650 Broadway",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019/Ellen's+Stardust+Diner,+1650+Broadway,+New+York,+NY+10019/@40.7624,-73.9853,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585b5b5b5b5b:0x5b5b5b5b5b5b5b5b!2m2!1d-73.9853!2d40.7624!3e2",mode:"walk"},
    c:null,w:"Can't book — walk-in only. Expect big queues!",tip:"1950s diner with Broadway waitstaff ('Stardusters') who sing show tunes while you eat. Karaoke anyone? 🎵"},
 ]},
-{num:10,date:"2026-05-14",lbl:"Thursday 14th May",ttl:"Central Park Zoo · 4 Charles Prime Rib",wth:"22°C · Warm & sunny · perfect for the zoo",tn:null,acts:[
+{num:10,date:"2026-05-14",lbl:"Thursday 14th May",ttl:"Central Park Zoo · 4 Charles Prime Rib",wth:"18°C / 12°C · ☔ Afternoon rain · umbrella for the zoo",tn:null,acts:[
   {t:"9:30am",n:"Leave hotel",s:null,
    dir:{label:"Walk 15 min → Central Park Zoo, 64th St & 5th Ave",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave,+New+York,+NY+10019,+United+States/Central+Park+Zoo,+New+York,+NY+10021,+United+States/@40.7661211,-73.9790456,17z/data=!3m2!4b1!5s0x89c258f818fac727:0x4350f1361bcc0e27!4m18!4m17!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258f1fcd66869:0x65d72e84d91a3f14!2m2!1d-73.9719906!2d40.7677061!2m3!6e0!7e2!8j1778576400!3e2",mode:"walk"},
    c:null,w:null,tip:null},
@@ -495,7 +510,7 @@ const days=[
    dir:{label:"Subway 18 min → Au Cheval from 30 Rockefeller",url:"https://www.google.com/maps/dir/30+Rockefeller+Plaza,+New+York,+NY/Au+Cheval,+New+York,+NY/@40.7546,-73.9934,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258fee98bc0a1:0x43d1bf6e8c5d30e9!2m2!1d-73.9787!2d40.7587!1m5!1m1!1s0x89c2599636a7c4c3:0x2a9f3dc3df48e0c1!2m2!1d-74.0001!2d40.7318!3e3",mode:"subway"},
    c:"Confirmed",w:null,tip:"TikTok the burger 😍"},
 ]},
-{num:11,date:"2026-05-15",lbl:"Friday 15th May",ttl:"Coney Island · The Edge · Golden Diner",wth:"22°C · Warm beach day · sunscreen, breezy on boardwalk",tn:null,acts:[
+{num:11,date:"2026-05-15",lbl:"Friday 15th May",ttl:"Coney Island · The Edge · Golden Diner",wth:"18°C / 10°C · Cloudy with rain tapering off · jacket for Coney boardwalk",tn:null,acts:[
   {t:"8:00am",n:"Leave hotel",s:null,dir:null,c:null,w:null,tip:null},
   {t:"~10:00am",n:"Coney Island — walk the boardwalk",s:null,
    dir:{label:"Subway ~55 min → Coney Island (D, F or N train)",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Coney+Island,+Brooklyn,+NY+11224/@40.6284,-73.9596,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2444cb74c6ecf:0x6c7e9e1a4a5a9b8!2m2!1d-73.9819!2d40.5755!3e3",mode:"subway"},
@@ -513,7 +528,7 @@ const days=[
   {t:"9:00pm",n:"🥞 Golden Diner — best pancakes in NYC",s:"confirmed",
    dir:null,c:null,w:null,tip:"Worth the trip! A late-night NYC institution on the Lower East Side."},
 ]},
-{num:12,date:"2026-05-16",lbl:"Saturday 16th May",ttl:"Free Day · Clipper City Jazz Sail 🚢",wth:"23°C · Beautiful day · temps drop to ~10°C on the water at night",tn:null,acts:[
+{num:12,date:"2026-05-16",lbl:"Saturday 16th May",ttl:"Free Day · Clipper City Jazz Sail 🚢",wth:"18°C / 11°C · Mostly cloudy · drops to ~10°C on the water at night — JACKET",tn:null,acts:[
   {t:"10:00am",n:"Louis Vuitton Chocolate Shop — 4th Floor, 57th St",s:"confirmed",
    dir:{label:"Walk → Louis Vuitton, 1 E 57th St",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Louis+Vuitton,+1+E+57th+St,+New+York,+NY+10022/@40.7644,-73.9791,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c258f9a9a9a9a9:0xa9a9a9a9a9a9a9a9!2m2!1d-73.9749!2d40.7632!3e2",mode:"walk"},
    c:"Erica: 3MCMY96F4BHA · Monica: 3MCN4N43CK2U · Christine: 3MCN7M4ATU7G",w:null,tip:"Le Chocolat Maxime Frédéric — 4th floor. Chocolate & Hazelnut Spread $48/330g."},
@@ -527,7 +542,7 @@ const days=[
   {t:"7:15pm",n:"Check in at Pier 17, 89 South St",s:"confirmed",dir:null,c:null,w:null,tip:"Boarding begins 15 min prior to departure."},
   {t:"7:30pm",n:"🚢 Clipper City Tall Ship — Sunset Jazz Sail",s:"confirmed",dir:null,c:"334966875 (Erica · 6 tix in Apple Wallet)",w:"Temperatures drop to ~10°C on the water — BRING A JACKET!",tip:"Duration: 7:30pm–9:15pm · Manhattan by Sail."},
 ]},
-{num:13,date:"2026-05-17",lbl:"Sunday 17th May — Departure Day 🏠",ttl:"Farewell Brunch · JFK · Home",wth:"23°C · Warm farewell · one last stroll through Times Square",tn:"Standard checkout is 12pm — ask at check-in on 4th May if a 2pm late checkout is possible. Plan around 12pm to be safe. Hotel can hold luggage after checkout.",acts:[
+{num:13,date:"2026-05-17",lbl:"Sunday 17th May — Departure Day 🏠",ttl:"Farewell Brunch · JFK · Home",wth:"18°C / 11°C · Mostly sunny · pleasant farewell stroll",tn:"Standard checkout is 12pm — ask at check-in on 4th May if a 2pm late checkout is possible. Plan around 12pm to be safe. Hotel can hold luggage after checkout.",acts:[
   {t:"Morning",n:"Pack bags — checkout is 12:00pm",s:"confirmed",dir:null,c:null,w:"Standard checkout is 12:00pm. A 2:00pm late checkout may be possible — ask at check-in on 4th May, but plan around 12pm to be safe.",tip:"If late checkout is granted, great bonus! If not, the hotel can store luggage while you enjoy your last hours in the city."},
   {t:"~10:50am",n:"Walk to Lillie's Victorian Establishment",s:null,
    dir:{label:"Walk 10 min → Lillie's Victorian Establishment",url:"https://www.google.com/maps/dir/Park+Central+Hotel+New+York,+870+7th+Ave/Lillie's+Victorian+Establishment,+249+W+49th+St,+New+York,+NY+10019/@40.761,-73.9862,17z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x89c258f82090418d:0xf1490df928fde01d!2m2!1d-73.9809508!2d40.7645958!1m5!1m1!1s0x89c2585d5d5d5d5d:0x5d5d5d5d5d5d5d5d!2m2!1d-73.9862!2d40.7608!3e2",mode:"walk"},
@@ -540,7 +555,123 @@ const days=[
 ]},
 ];
 
-// ============== COMPLETION STATE ==============
+// ============== LIVE WEATHER ==============
+// liveWx: { byDate: {'2026-05-04': {hi, lo, code, pop, label}}, byHour: {'2026-05-04T17:00': {temp, code}}, status: 'idle'|'loading'|'ready'|'error', loadedAt: ISO }
+let liveWx={byDate:{},byHour:{},status:'idle',loadedAt:null};
+
+// WMO weather code → emoji + short label.
+function wmoToIconLabel(code){
+  if(code===0) return ['☀️','Clear'];
+  if(code===1) return ['🌤','Mostly clear'];
+  if(code===2) return ['⛅','Partly cloudy'];
+  if(code===3) return ['☁️','Overcast'];
+  if(code===45||code===48) return ['🌫','Fog'];
+  if(code>=51&&code<=55) return ['🌦','Drizzle'];
+  if(code===56||code===57) return ['🌧','Freezing drizzle'];
+  if(code>=61&&code<=65) return ['🌧','Rain'];
+  if(code===66||code===67) return ['🌧','Freezing rain'];
+  if(code>=71&&code<=77) return ['🌨','Snow'];
+  if(code>=80&&code<=82) return ['🌦','Showers'];
+  if(code===85||code===86) return ['🌨','Snow showers'];
+  if(code===95) return ['⛈','Thunderstorm'];
+  if(code===96||code===99) return ['⛈','Thunder w/ hail'];
+  return ['','—'];
+}
+
+// Build the "HH:00" key for an hourly lookup from a date+minutes pair.
+function hourKey(dateStr,minutes){
+  const h=Math.floor(minutes/60);
+  return dateStr+'T'+String(h).padStart(2,'0')+':00';
+}
+
+async function fetchLiveWeather(){
+  if(liveWx.status==='loading') return;
+  liveWx.status='loading';
+  renderDays();
+  // Hotel coords: Park Central New York, 870 7th Ave
+  const lat=40.7646, lon=-73.9809;
+  const path='/v1/forecast'
+    +'?latitude='+lat+'&longitude='+lon
+    +'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'
+    +'&hourly=temperature_2m,weather_code,precipitation_probability'
+    +'&temperature_unit=celsius&timezone=America%2FNew_York&forecast_days=16';
+  // Endpoints to try in order. Direct first, then a CORS-proxy fallback in case
+  // a network firewall / ad-blocker / DNS filter is blocking the direct call.
+  const endpoints=[
+    'https://api.open-meteo.com'+path,
+    'https://corsproxy.io/?'+encodeURIComponent('https://api.open-meteo.com'+path),
+  ];
+
+  let lastErr=null;
+  for(const url of endpoints){
+    try{
+      const ctrl=new AbortController();
+      const timer=setTimeout(()=>ctrl.abort(),8000);
+      const r=await fetch(url,{cache:'no-store',signal:ctrl.signal});
+      clearTimeout(timer);
+      if(!r.ok) throw new Error('HTTP '+r.status+' '+r.statusText);
+      const j=await r.json();
+      if(!j.daily||!j.hourly) throw new Error('Unexpected response shape');
+
+      j.daily.time.forEach((d,i)=>{
+        const code=j.daily.weather_code[i];
+        const [icon,label]=wmoToIconLabel(code);
+        liveWx.byDate[d]={
+          hi:Math.round(j.daily.temperature_2m_max[i]),
+          lo:Math.round(j.daily.temperature_2m_min[i]),
+          code,icon,label,
+          pop:j.daily.precipitation_probability_max?j.daily.precipitation_probability_max[i]:null
+        };
+      });
+      j.hourly.time.forEach((t,i)=>{
+        liveWx.byHour[t]={
+          temp:Math.round(j.hourly.temperature_2m[i]),
+          code:j.hourly.weather_code[i],
+          pop:j.hourly.precipitation_probability?j.hourly.precipitation_probability[i]:null
+        };
+      });
+      liveWx.status='ready';
+      liveWx.loadedAt=new Date().toISOString();
+      liveWx.errMsg=null;
+      console.log('[weather] Loaded',Object.keys(liveWx.byDate).length,'days from',url.startsWith('https://api.open-meteo')?'open-meteo direct':'cors-proxy fallback');
+      renderDays();
+      return;
+    }catch(e){
+      lastErr=e;
+      console.warn('[weather] Endpoint failed:',url.split('?')[0],'-',e.name||'',e.message||e);
+    }
+  }
+  // All endpoints failed
+  liveWx.status='error';
+  liveWx.errMsg=(lastErr&&(lastErr.name==='AbortError'?'timed out':lastErr.message))||'fetch failed';
+  console.warn('[weather] All endpoints failed. Falling back to static forecast. Reason:',liveWx.errMsg);
+  renderDays();
+}
+
+// Get the live forecast string for a day, or null if no live data available.
+function getLiveDayWx(day){
+  if(liveWx.status!=='ready') return null;
+  const w=liveWx.byDate[day.date];
+  if(!w) return null;
+  let s=w.icon+' '+w.hi+'° / '+w.lo+'°C · '+w.label;
+  if(w.pop!=null&&w.pop>=20) s+=' · '+w.pop+'% rain';
+  return s;
+}
+
+// Get the hourly weather snippet for an activity, or null if no data.
+function getLiveActWx(day,act){
+  if(liveWx.status!=='ready') return null;
+  if(!day.date) return null;
+  const mins=parseTimeToMinutes(act.t);
+  if(mins===null) return null;
+  const key=hourKey(day.date,mins);
+  const w=liveWx.byHour[key];
+  if(!w) return null;
+  const [icon]=wmoToIconLabel(w.code);
+  return w.temp+'° '+icon;
+}
+
+
 const STORAGE_KEY='nyc2026_completed_v2';
 const LEGACY_KEY='nyc2026_completed_v1';
 
@@ -714,9 +845,12 @@ function buildDayCard(day,di,completed){
 
     const toggleBtn=`<button class="act-toggle" aria-label="${done?'Mark incomplete':'Mark complete'}" onclick="event.stopPropagation();toggleAct(${day.num},${ai})">${done?'✓':''}</button>`;
 
+    const liveActWx=getLiveActWx(day,act);
+    const tltHtml=`<div class="tlt">${act.t}${liveActWx?`<span class="tlt-wx">${liveActWx}</span>`:''}</div>`;
+
     tlHtml+=`
       <div class="tli${done?' act-done':''}">
-        <div class="tlt">${act.t}</div>
+        ${tltHtml}
         <div class="tld"><div class="tldot ${done?'dc':(act.s?dotCls(act.s):'')}"></div></div>
         <div class="tlcw">
           <div class="ac${hasD?' hd':''}${done?' act-done':''}" ${hasD?`onclick="toggleActDetails(this,'d${day.num}-${ai}')"`:''}>
@@ -742,6 +876,11 @@ function buildDayCard(day,di,completed){
       </button>
     </div>`;
 
+  const liveDayWx=getLiveDayWx(day);
+  const dwthClass=liveDayWx?'dwth live':(liveWx.status==='loading'?'dwth loading':'dwth');
+  const dwthContent=liveDayWx||day.wth;
+  const dwthHtml=`<div class="${dwthClass}">${liveDayWx?'':'🌤 '}${dwthContent}</div>`;
+
   return `
     <div class="dcard${completed?' completed':''}" id="day${day.num}" style="animation-delay:${di*.03}s">
       <div class="dhdr" onclick="toggleDay(${day.num})">
@@ -752,7 +891,7 @@ function buildDayCard(day,di,completed){
         <div class="dhdr-txt">
           <div class="dlbl">${day.lbl}</div>
           <div class="dttl">${day.ttl}</div>
-          <div class="dwth">🌤 ${day.wth}</div>
+          ${dwthHtml}
         </div>
         <div class="dhdr-r">
           <div class="sdots">${dotsHtml}</div>
@@ -788,7 +927,18 @@ function renderDays(){
   // Completed at the bottom, most recently completed at top of that section
   completed.sort((a,b)=>b.num-a.num);
 
-  let html='';
+  let wxStatusHtml='';
+  if(liveWx.status==='loading'){
+    wxStatusHtml=`<div class="wx-status loading"><div class="wx-spinner"></div><div class="wx-msg">Loading live forecast from Open-Meteo…</div></div>`;
+  }else if(liveWx.status==='error'){
+    wxStatusHtml=`<div class="wx-status error"><div class="wx-msg">⚠️ Live forecast unavailable (${liveWx.errMsg||'fetch failed'}). Showing static forecast.</div><button class="wx-retry" onclick="fetchLiveWeather()">Retry</button></div>`;
+  }else if(liveWx.status==='ready'&&liveWx.loadedAt){
+    const t=new Date(liveWx.loadedAt);
+    const tStr=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    wxStatusHtml=`<div class="wx-status ready"><div class="wx-msg">● Live forecast loaded at ${tStr}</div><button class="wx-retry" onclick="fetchLiveWeather()">Refresh</button></div>`;
+  }
+
+  let html=wxStatusHtml;
   incomplete.forEach((d,i)=>{html+=buildDayCard(d,i,false)});
   if(completed.length){
     html+=`<div class="completed-divider"><div class="completed-divider-line"></div><div class="completed-divider-lbl">✓ Completed (${completed.length})</div><div class="completed-divider-line"></div></div>`;
@@ -826,6 +976,8 @@ function toggleActDetails(el,id){
 }
 
 renderDays();
+// Kick off live weather fetch — page will re-render in place when data arrives.
+fetchLiveWeather();
 </script>
 </body>
 </html>
