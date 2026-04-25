@@ -769,6 +769,15 @@ function buildDayCard(day,di,completed){
 
 function renderDays(){
   const dc=document.getElementById('dc');
+  // Capture which day cards are currently open and which activity details are expanded,
+  // so we can restore the user's view after re-rendering.
+  const openDays=new Set();
+  dc.querySelectorAll('.dcard.open').forEach(el=>{
+    const m=el.id.match(/^day(\d+)$/); if(m) openDays.add(m[1]);
+  });
+  const openActDetails=new Set();
+  dc.querySelectorAll('.adet.show').forEach(el=>{openActDetails.add(el.id);});
+
   const incomplete=[];
   const completed=[];
   days.forEach(d=>{
@@ -786,12 +795,29 @@ function renderDays(){
     completed.forEach((d,i)=>{html+=buildDayCard(d,incomplete.length+i,true)});
   }
   dc.innerHTML=html;
+
+  // Restore expanded state
+  openDays.forEach(num=>{
+    const card=document.getElementById('day'+num);
+    if(card) card.classList.add('open');
+  });
+  openActDetails.forEach(id=>{
+    const det=document.getElementById(id);
+    if(det){
+      det.classList.add('show');
+      // Also re-apply the parent .ac.exp styling
+      const ac=det.closest('.ac');
+      if(ac) ac.classList.add('exp');
+    }
+  });
 }
 
 function toggleDay(dayNum){
   const card=document.getElementById('day'+dayNum);
+  const wasOpen=card.classList.contains('open');
   card.classList.toggle('open');
-  if(card.classList.contains('open')) setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  // Only scroll into view when the user is opening a card (not on programmatic re-render)
+  if(!wasOpen) setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),50);
 }
 function toggleActDetails(el,id){
   el.classList.toggle('exp');
